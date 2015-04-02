@@ -12,10 +12,12 @@ var express = require('express'),
     methodOverride = require('method-override'),
     cookieParser = require('cookie-parser'),
     cookieSession = require('cookie-session'),
+    fs = require('fs'),
 
     config = require('./config.js');
 
 var app = express();
+var accessLogStream = fs.createWriteStream('./codecraft.log', {flags: 'a'})
 
 /***** Server set up *****/
 app.use(express.static(config.server.distFolder));                              // serve application files
@@ -24,7 +26,7 @@ app.use(favicon(config.server.distFolder + '/favicon.png'));                    
 app.use(protectJSON);                                                           // apply JSON protection
 app.set('port', config.server.listenPort);                                      // set up port number
 app.set('securePort', config.server.securePort);                                // set up secure port number
-app.use(morgan('dev'));                                                         // set up logger
+app.use(morgan('combined', {stream: accessLogStream}))                          // set up logger
 app.use(compression());                                                         // apply compression to all request
 app.use(config.server.staticUrl, compression());                                // apply compression to static files
 app.use(bodyParser.json());                                                     // set up JSON paser
