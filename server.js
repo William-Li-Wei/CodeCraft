@@ -17,7 +17,7 @@ var express = require('express'),
     config = require('./config.js');
 
 var app = express();
-var accessLogStream = fs.createWriteStream('./codecraft.log', {flags: 'a'})
+var accessLogStream = fs.createWriteStream('./codecraft.log', {flags: 'a'});
 
 /***** Server set up *****/
 app.use(express.static(config.server.distFolder));                              // serve application files
