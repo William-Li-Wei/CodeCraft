@@ -45,8 +45,14 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.get('/', function(req, res){
-    res.send('hello world');
+// Handle unmatched api
+app.get('/api/*', function(req, res) {
+    console.log('unknown api');
+    res.json(400, 'bad request');
+});
+
+app.get('/*',function(req, res) {
+    res.sendfile('index.html', { root: config.server.distFolder });
 });
 
 // Start server
