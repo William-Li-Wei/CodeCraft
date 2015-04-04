@@ -14,9 +14,13 @@ ccFramework.config(['$stateProvider', function($stateProvider) {
 }]);
 
 ccFramework.controller('MainMenuController', ['$scope', function($scope) {
-    console.log('main menu controller triggered.');
+    $scope.menuOpened = false;
+    $scope.toggleMenu = function() {
+        $scope.menuOpened = !$scope.menuOpened;
+    }
 }]);
 
 ccFramework.controller('HomePageController', ['$scope', function($scope) {
-    console.log('homepage controller triggered.');
+    $scope.pageConfig = pageConfig;
+    $scope.language = 'chinese';
 }]);
