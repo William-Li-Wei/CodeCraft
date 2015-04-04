@@ -226,9 +226,9 @@
 	-webkit-transform: translate3d(200%,0,0);
 	transform: translate3d(200%,0,0);
 }
-.bt-menu ul:first-of-type li:last-child {
-    -webkit-transform: translate3d(100,0,0);
-    transform: translate3d(100,0,0);
+.bt-menu ul:nth-of-type(2) li:last-child {
+    -webkit-transform: translate3d(100%,0,0);
+    transform: translate3d(100%,0,0);
 }
 
 .bt-menu.bt-menu-open ul:first-of-type li,
