@@ -24,13 +24,13 @@
         <nav id="bt-menu" class="bt-menu" ng-class="{ 'bt-menu-open': menuOpened, 'bt-menu-close': !menuOpened }">
             <a class="bt-menu-trigger" ng-click="toggleMenu()"><span>Menu</span></a>
             <ul>
-                <li ng-repeat="button in menu.buttons" tooltip-placement="left" tooltip="{{ button.name }}">
-                    <a class="fa fa-{{ button.icon }}">{{ button.name }}</a>
+                <li ng-repeat="item in menu.navigations" tooltip-placement="left" tooltip="{{ item.name }}">
+                    <a class="fa fa-{{ item.icon }}">{{ item.name }}</a>
                 </li>
             </ul>
             <ul>
-                <li ng-repeat="item in menu.navigations" tooltip="{{ item.name }}">
-                    <a class="fa fa-{{ item.icon }}">{{ item.name }}</a>
+                <li ng-repeat="button in menu.buttons" tooltip="{{ button.name }}">
+                    <a class="fa fa-{{ button.icon }}">{{ button.name }}</a>
                 </li>
             </ul>
         </nav>
