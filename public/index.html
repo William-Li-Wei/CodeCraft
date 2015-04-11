@@ -11,7 +11,9 @@
 
     <link rel="stylesheet" href="components/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="components/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="components/angular-loading-bar/loading-bar.css"/>
 
+    <link rel="stylesheet" href="css/animate.css"/>
     <link rel="stylesheet" href="css/code-craft.css"/>
     <link rel="stylesheet" href="css/main-menu.css"/>
 </head>
@@ -22,18 +24,23 @@
         <nav id="bt-menu" class="bt-menu" ng-class="{ 'bt-menu-open': menuOpened, 'bt-menu-close': !menuOpened }">
             <a class="bt-menu-trigger" ng-click="toggleMenu()"><span>Menu</span></a>
             <ul>
-                <li><a href="#" class="fa fa-comment-">Browser</a></li>
-                <li><a href="#" class="fa fa-envelope-o">Email</a></li>
-                <li><a href="#" class="fa fa-cogs">Chat</a></li>
-                <li><a href="#" class="fa fa-calculator">Calculate</a></li>
-                <li><a href="#" class="fa fa-bell-o">Record</a></li>
+                <li ng-repeat="button in menu.buttons" tooltip-placement="left" tooltip="{{ button.name }}">
+                    <a class="fa fa-{{ button.icon }}">{{ button.name }}</a>
+                </li>
             </ul>
             <ul>
-                <li><a href="#" class="fa fa-newspaper-o">News</a></li>
-                <li><a href="#" class="fa fa-file-text-o">Add</a></li>
-                <li><a href="#" class="fa fa-trash-o">Delete</a></li>
+                <li ng-repeat="item in menu.navigations" tooltip="{{ item.name }}">
+                    <a class="fa fa-{{ item.icon }}">{{ item.name }}</a>
+                </li>
             </ul>
         </nav>
+    </div>
+    <div class="footer">
+        <hr/>
+        <br/>
+        <br/>
+        <br/>
+        © 2015 源艺冀ICP备xxxxxxxx
     </div>
 
 
@@ -41,6 +48,10 @@
     <script type="text/javascript" scr="components/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="components/angular/angular.js"></script>
     <script type="text/javascript" src="components/angular-ui-router/angular-ui-router.js"></script>
+    <script type="text/javascript" src="components/angular-scroll/angular-scroll.js"></script>
+    <script type="text/javascript" src="components/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="components/angular-ui-bootstrap/angular-ui-bootstrap-0.12.1.js"></script>
+    <script type="text/javascript" src="components/angular-loading-bar/loading-bar.js"></script>
 
     <script type="text/javascript" src="resources/pageConfig.js"></script>
     <script type="text/javascript" src="modules/framework/frameworkModule.js"></script>
