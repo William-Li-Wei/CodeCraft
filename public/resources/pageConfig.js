@@ -3,9 +3,9 @@
  */
 var pageConfig = {
     chinese: {
-        homepageTitle: '分享是个让人愉快的事情.'
+        homepageTitle: '分享是件让人愉快的事情'
     },
     english: {
-        homepageTitle: 'Sharing is a good thing.'
+        homepageTitle: 'Sharing is a good thing'
     }
 }
