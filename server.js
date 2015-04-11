@@ -52,7 +52,7 @@ app.get('/api/*', function(req, res) {
 });
 
 app.get('/*',function(req, res) {
-    res.sendfile('index.html', { root: config.server.distFolder });
+    res.sendFile('index.html', { root: config.server.distFolder });
 });
 
 // Start server

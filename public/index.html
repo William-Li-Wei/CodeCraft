@@ -1,22 +1,61 @@
 <!DOCTYPE html>
 <html ng-app="codeCraft">
 <head lang="en">
-    <base href="/">
-    <meta charset="UTF-8">
+    <meta name="keywords" content="HTML, CSS, XML, XHTML, JavaScript, Code, Programming, Database, Data visuallization, Map, Language, Game, code craft, 源艺, 编程, 教程, 源代码, 实例, 数据库, 数据可视化, 游戏, 开发, 编程语言, 地图技术">
+    <meta name="description" content="Free Web tutorials on Programming, 分享源代码的开放平台">
+    <meta name="William Lee" content="Sharing is a good thing. 分享是个让人愉快的事情.">
     <title>CodeCraft - 源艺</title>
+
+    <meta charset="UTF-8">
+    <base href="/">
+
+    <link rel="stylesheet" href="components/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="components/font-awesome/css/font-awesome.css"/>
+    <link rel="stylesheet" href="components/angular-loading-bar/loading-bar.css"/>
+
+    <link rel="stylesheet" href="css/animate.css"/>
+    <link rel="stylesheet" href="css/code-craft.css"/>
+    <link rel="stylesheet" href="css/main-menu.css"/>
 </head>
 <body>
 
     <div ui-view></div>
     <div ng-controller="MainMenuController">
-        main menu goes here
+        <nav id="bt-menu" class="bt-menu" ng-class="{ 'bt-menu-open': menuOpened, 'bt-menu-close': !menuOpened }">
+            <a class="bt-menu-trigger" ng-click="toggleMenu()"><span>Menu</span></a>
+            <ul>
+                <li ng-repeat="button in menu.buttons" tooltip-placement="left" tooltip="{{ button.name }}">
+                    <a class="fa fa-{{ button.icon }}">{{ button.name }}</a>
+                </li>
+            </ul>
+            <ul>
+                <li ng-repeat="item in menu.navigations" tooltip="{{ item.name }}">
+                    <a class="fa fa-{{ item.icon }}">{{ item.name }}</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="footer">
+        <hr/>
+        <br/>
+        <br/>
+        <br/>
+        © 2015 源艺冀ICP备xxxxxxxx
     </div>
 
 
+    <script type="text/javascript" scr="components/jQuery/jquery-2.1.3.js"></script>
+    <script type="text/javascript" scr="components/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="components/angular/angular.js"></script>
     <script type="text/javascript" src="components/angular-ui-router/angular-ui-router.js"></script>
+    <script type="text/javascript" src="components/angular-scroll/angular-scroll.js"></script>
+    <script type="text/javascript" src="components/angular-animate/angular-animate.js"></script>
+    <script type="text/javascript" src="components/angular-ui-bootstrap/angular-ui-bootstrap-0.12.1.js"></script>
+    <script type="text/javascript" src="components/angular-loading-bar/loading-bar.js"></script>
 
+    <script type="text/javascript" src="resources/pageConfig.js"></script>
     <script type="text/javascript" src="modules/framework/frameworkModule.js"></script>
     <script type="text/javascript" src="app.js"></script>
+
 </body>
 </html>
