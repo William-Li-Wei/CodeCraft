@@ -14,7 +14,7 @@
 	height: 0;
 	border-width: 0px;
 	border-style: solid;
-	border-color: #333;
+	border-color: rgba(48,48,48,0.9);
 	background-color: rgba(0,0,0,0);
 	-webkit-backface-visibility: hidden;
 	-webkit-transition: border-width 0.3s, background-color 0.3s, height 0s 0.3s;
@@ -23,7 +23,7 @@
 
 .bt-menu.bt-menu-open {
 	height: 100%;
-	border-width: 90px 90px 90px 90px;
+	border-width: 60px 60px 60px 60px;
 	background-color: rgba(0,0,0,0.3);
 	-webkit-transition: border-width 0.3s, background-color 0.3s;
 	transition: border-width 0.3s, background-color 0.3s;
@@ -40,12 +40,12 @@
 
 .bt-menu-trigger {
 	position: fixed;
-	right: 20px;
-	bottom: 20px;
+	right: 15px;
+	bottom: 15px;
 	z-index: 100;
 	display: block;
-	width: 50px;
-	height: 50px;
+	width: 32px;
+	height: 32px;
 	cursor: pointer;
 }
 
@@ -118,11 +118,11 @@
 
 .bt-menu ul:first-of-type {
 	right: 0;
-	bottom: 75px;
+	bottom: 60px;
 }
 
 .bt-menu ul:nth-of-type(2) {
-	right: 75px;
+	right: 60px;
 	bottom: 0px;
 }
 
@@ -138,9 +138,9 @@
 
 .bt-menu ul li {
 	visibility: hidden;
-	width: 90px;
-	height: 90px;
-	line-height: 90px;
+	width: 60px;
+	height: 60px;
+	line-height: 60px;
 	opacity: 0;
 	-webkit-transition: -webkit-transform 0.3s, opacity 0.2s, visibility 0s 0.3s;
 	transition: transform 0.3s, opacity 0.2s, visibility 0s 0.3s;
@@ -242,7 +242,7 @@
 }
 
 .bt-menu ul li a {
-    padding-top: 18px;
+    padding: 15px;
 	display: block;
 	outline: none;
 	color: transparent;
@@ -253,7 +253,7 @@
 
 .bt-menu ul li a:before {
 	color: #fff;
-	font-size: 50px;
+	font-size: 30px;
 	opacity: 0.5;
 	-webkit-transition: opacity 0.2s;
 	transition: opacity 0.2s;
@@ -266,7 +266,7 @@
 
 @media screen and (max-height: 31.125em) {
 	.bt-menu ul li a:before {
-		font-size: 32px;
+		font-size: 24px;
 	}
 
 	.bt-menu ul:first-of-type li {
