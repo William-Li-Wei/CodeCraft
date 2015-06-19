@@ -25,12 +25,12 @@
             <a class="bt-menu-trigger" ng-click="toggleMenu()"><span>Menu</span></a>
             <ul>
                 <li ng-repeat="item in menu.navigations" tooltip-placement="left" tooltip="{{ item.name }}">
-                    <a class="fa fa-{{ item.icon }}">{{ item.name }}</a>
+                    <a class="fa fa-{{ item.icon }}" ng-click="item.click()">{{ item.name }}</a>
                 </li>
             </ul>
             <ul>
                 <li ng-repeat="button in menu.buttons" tooltip="{{ button.name }}">
-                    <a class="fa fa-{{ button.icon }}">{{ button.name }}</a>
+                    <a class="fa fa-{{ button.icon }}" ng-click="button.click()">{{ button.name }}</a>
                 </li>
             </ul>
         </nav>
