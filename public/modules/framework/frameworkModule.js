@@ -1,7 +1,6 @@
 /**
  * Created by william on 02.04.15.
  */
-
 var ccFramework = angular.module('cc.framework', ['duScroll', 'ngAnimate', 'ui.bootstrap', 'angular-loading-bar']);
 
 
