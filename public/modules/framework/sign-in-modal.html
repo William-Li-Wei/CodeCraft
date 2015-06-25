@@ -1,25 +1,40 @@
+<form name="form">
 <div class="modal-header">
     <h3>
-    Sign In
+    用户<span ng-if="mode === 'login'">登录</span><span ng-if="mode === 'register'">注册</span>
     <button class="close" ng-click="close()">&times;</button>
     </h3>    
 </div>
 <div class="modal-body">
-	<form>
-		<div class="form-group">
-			<div class="input-group">
-				<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
-				<input type="email" class="form-control" nmae="email" required>
-			</div>			
+	<div ng-if="message">
+		<div class="alert alert-{{ message.type }}" role="alert">{{ message.text }}</div>
+	</div>
+	<div class="form-group" ng-class="{ 'has-error': !form.email.$valid, 'has-success': form.email.$valid }">
+		<div class="input-group">
+			<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+			<input type="email" class="form-control" name="email" ng-model="userData.email" placeholder="电子邮箱" required>
 		</div>
-		<div class="form-group">
-			<div class="input-group">
-				<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-				<input type="password" class="form-control" nmae="password" required>
-			</div>			
+	</div>
+	<div class="form-group" ng-class="{ 'has-error': !form.password.$valid, 'has-success': form.password.$valid }">
+		<div class="input-group">
+			<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+			<input type="password" class="form-control" name="password" ng-model="userData.password" placeholder="登陆密码" required minlength="6">
 		</div>
-	</form>
+	</div>
+	<div class="form-group" ng-if="mode === 'register'" ng-class="{ 'has-error': !form.password2.$valid || userData.password !== userData.password2, 'has-success': form.password2.$valid && userData.password === userData.password2 }">
+		<div class="input-group">
+			<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+			<input type="password" class="form-control" name="password2" ng-model="userData.password2" placeholder="确认密码" required minlength="6">
+		</div>
+	</div>
 </div>
 <div class="modal-footer">
-	modal-footer
+	<a class="pull-left" ng-click="toggle()">
+		<span class="text-success" ng-if="mode === 'login'">还没有账户? 5秒注册</span>
+		<span class="text-success" ng-if="mode === 'register'">已经有户? 用户登录</span>
+	</a>
+	<button class="btn btn-sm" ng-click="close()">取消</button>
+	<button class="btn btn-success btn-sm" ng-click="login()" ng-if="mode === 'login'" ng-disabled="!formValid(form)">登录</button>
+	<button class="btn btn-success btn-sm" ng-click="register()" ng-if="mode === 'register'" ng-disabled="!formValid(form)">注册</button>
 </div>
+</form>

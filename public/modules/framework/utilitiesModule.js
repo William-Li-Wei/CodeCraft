@@ -1,13 +1,27 @@
 /**
  * Created by william on 06.18.15.
  */
-var ccUtilities = angular.module('cc.utilities', ['ngCookies', 'ag.sdk.id']);
+var ccUtilities = angular.module('cc.utilities', ['ngCookies']);
+
+
+/**
+ * SafeApply Service
+ */
+ccUtilities.factory('safeApply', ['$rootScope', function ($rootScope) {
+	return function (fn) {
+		if ($rootScope.$$phase) {
+			fn();
+		} else {
+			$rootScope.$apply(fn);
+		}
+	};
+}]);
 
 
 /**
  * Promise Service
  */
-skdUtilitiesApp.factory('promiseService', ['$q', 'safeApply', 
+ccUtilities.factory('promiseService', ['$q', 'safeApply',
 	function ($q, safeApply) {
 	    var _defer = function() {
 	        var deferred = $q.defer();
@@ -95,10 +109,11 @@ skdUtilitiesApp.factory('promiseService', ['$q', 'safeApply',
 	    }
 	}]);
 
+
 /**
  * Local Storage
  */
- ccUtilities.factory('localStore', ['$cookieStore', '$window', 
+ ccUtilities.factory('localStore', ['$cookieStore', '$window',
  	function($cookieStore, $window) {
 	    return {
 	        setItem: function(key, value) {

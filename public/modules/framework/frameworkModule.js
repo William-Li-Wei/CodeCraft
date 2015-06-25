@@ -1,7 +1,7 @@
 /**
  * Created by william on 02.04.15.
  */
-var ccFramework = angular.module('cc.framework', ['duScroll', 'ngAnimate', 'ui.bootstrap', 'angular-loading-bar']);
+var ccFramework = angular.module('cc.framework', []);
 
 
 /**
@@ -45,7 +45,6 @@ ccFramework.controller('MainMenuController', ['$scope', 'frameworkModalFactory',
     $scope.menu = angular.copy(_defaultMenu);
 
 
-
     // Interactions
     $scope.toggleMenu = function() {
         $scope.menuOpened = !$scope.menuOpened;
@@ -71,9 +70,13 @@ ccFramework.controller('MainMenuController', ['$scope', 'frameworkModalFactory',
     });
 }]);
 
-ccFramework.controller('HomePageController', ['$scope', function($scope) {
+ccFramework.controller('HomePageController', ['$rootScope', '$scope', 'security', function($rootScope, $scope, security) {
     $scope.pageConfig = pageConfig;
     $scope.language = 'chinese';
+
+    $rootScope.$on('cc::security::login', function() {
+        $scope.user = security.currentUser();
+    });
 }]);
 
 
@@ -84,7 +87,6 @@ ccFramework.controller('HomePageController', ['$scope', function($scope) {
 ccFramework.factory('frameworkModalFactory', ['$modal', function($modal) {
     return {
         showSignInModal: function() {
-            console.log('testing modal');
             var modal = $modal.open({
                 templateUrl: '/modules/framework/sign-in-modal.html',
                 controller: 'SignInModalController'
@@ -98,13 +100,52 @@ ccFramework.factory('frameworkModalFactory', ['$modal', function($modal) {
 /**
  * Modal Controllers
  */
-ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 
-    function($scope, $modalInstance) {
+ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'toastr', 'security',
+    function($scope, $modalInstance, toastr, security) {
+        // Initialization
+        $scope.mode = 'login';
+        $scope.userData = {};
+
         // Interactions
         $scope.close = function() {
             $scope.cancel();
         }
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
+        }
+        $scope.toggle = function() {
+            if($scope.mode === 'login') {
+                $scope.mode = 'register';
+            } else {
+                $scope.mode = 'login';
+            }
+        }
+        $scope.formValid = function(form) {
+            var valid = true;
+            if(!form.email.$valid) {
+                valid = false;
+            }
+            if($scope.mode === 'login') {
+                if(!form.password.$valid) {
+                    valid = false;
+                }
+            } else {
+                if(!form.password.$valid || $scope.userData.password !== $scope.userData.password2) {
+                    valid = false;
+                }
+            }
+            return valid;
+        }
+        $scope.login = function() {
+            security.login($scope.userData.email, $scope.userData.password)
+                .then(function(user) {
+                    toastr.success('欢迎来到源艺, ' + user.username, '欢迎');
+                    $scope.close();
+                }, function(err) {
+                    $scope.message = security.lastMessage();
+                });
+        }
+        $scope.register = function() {
+            console.log($scope.userData);
         }
     }]);
