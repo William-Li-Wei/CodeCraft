@@ -148,4 +148,10 @@ ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'to
         $scope.register = function() {
             console.log($scope.userData);
         }
+        $scope.keyPress = function(event) {
+            if(event.which === 13) {
+                $scope.login();
+                event.preventDefault();
+            }
+        }
     }]);
