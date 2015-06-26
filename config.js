@@ -9,6 +9,7 @@ module.exports = {
         dbUrl: 'mongodb://127.0.0.1:27017'
     },
     security: {
+        saltLength: 25,                                     // The length of the salt used for encryption
         dbName: 'YOURDBNAME',
         usersCollection: 'USERSCOLLECTIONNAME'              // The name of the collection contains user information
     },
@@ -19,6 +20,6 @@ module.exports = {
         distFolder: path.resolve(__dirname, './public'),    // The folder that contains the application files
         staticUrl: '/static',                               // The base url from which we serve static files (such as js, css and images)
         cookieSecret: 'YOURSECRET',                         // The secret for encrypting the cookie
-        cookieName: 'YOURCOOKIENAME'                       // The cookie name
+        cookieName: 'YOURCOOKIENAME'                        // The cookie name
     }
 };

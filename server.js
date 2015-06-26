@@ -4,7 +4,6 @@
 
 var express = require('express'),
     http = require('http'),
-    protectJSON = require('./lib/protectJSON'),
     favicon = require('serve-favicon'),
     morgan = require('morgan'),
     compression = require("compression"),
@@ -13,9 +12,15 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     cookieSession = require('cookie-session'),
 
-    config = require('./config.js');
+    config = require('./config.js'),
+    mongoose = require('mongoose'),
+    passport = require('passport'),
+    protectJSON = require('./lib/protectJSON'),
+    security = require('./lib/security.js');
 
 var app = express();
+// Get connection to MongoDB
+var connection = mongoose.connect(config.mongo.dbUrl + '/' + config.security.dbName);
 
 /***** Server set up *****/
 app.use(express.static(config.server.distFolder));                              // serve application files
@@ -32,6 +37,13 @@ app.use(methodOverride());                                                      
 app.use(cookieParser(config.server.cookieSecret));                              // set up cookie paser with secrets
 // provide guests sessions
 app.use(cookieSession({name: config.server.cookieName, secret: config.server.cookieSecret}));
+// Initialize PassportJS
+app.use(passport.initialize());
+// Use Passport's session authentication strategy - this stores the logged in user in the session and will now run on any request
+app.use(passport.session());
+
+// Add Mongo strategy for authentication
+security.initialize(config.mongo.dbUrl, config.security.dbName, config.security.usersCollection);
 
 app.use(function(req, res, next) {
     var t="[" + new Date().toUTCString() + "]";
@@ -42,6 +54,11 @@ app.use(function(req, res, next) {
     }
     next();
 });
+
+// Basic access api
+app.post('/login', security.login);
+app.post('/logout', security.logout);
+app.get('/current-user', security.sendCurrentUser);
 
 // Handle unmatched api
 app.get('/api/*', function(req, res) {

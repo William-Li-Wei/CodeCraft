@@ -2,7 +2,7 @@
  * Created by william on 02.04.15.
  */
 
-var codeCraft = angular.module('codeCraft', [ 'ui.router', 'cc.framework']);
+var codeCraft = angular.module('codeCraft', [ 'ui.router', 'duScroll', 'ngAnimate', 'ui.bootstrap', 'angular-loading-bar', 'toastr', 'cc.utilities', 'cc.framework', 'cc.security']);
 
 codeCraft.config(['$urlRouterProvider', '$locationProvider', '$stateProvider', function($urlRouterProvider, $locationProvider, $stateProvider) {
     $locationProvider.html5Mode(true);
