@@ -10,8 +10,10 @@ var userSchema = new Schema({
     role                : { type: String, required: true },
     username            : { type: String, required: true },
     status              : { type: String, required: true },
-    created             : { type: Date, required: true },
-    updated             : { type: Date, required: true }
+    createdAt           : { type: Date, required: true },
+    createdBy           : { type: String, required: true },
+    updatedAt           : { type: Date, required: true },
+    updatedBy           : { type: String, required: true }
 }, { collection: "users" });
 
 exports.getUserModel = function() {

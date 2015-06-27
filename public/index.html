@@ -20,7 +20,7 @@
 </head>
 <body>
 
-    <div ui-view></div>
+    <div ui-view class="bounce"></div>
     <div ng-controller="MainMenuController">
         <nav id="bt-menu" class="bt-menu" ng-class="{ 'bt-menu-open': menuOpened, 'bt-menu-close': !menuOpened }">
             <a class="bt-menu-trigger" ng-click="toggleMenu()"><span>Menu</span></a>
@@ -35,6 +35,9 @@
                 </li>
             </ul>
         </nav>
+        <div class="profile-photo-suspended bounce" ng-if="user && !menuOpened" ng-click="viewProfile()">
+            <img src="resources/img/avatar/avatar_steam_huo_thumb.jpg" alt="huo" class="img-circle">
+        </div>
     </div>
     <div class="footer">
         <hr/>
@@ -56,10 +59,14 @@
     <script type="text/javascript" src="components/angular-loading-bar/loading-bar.js"></script>
     <script type="text/javascript" src="components/angular-toastr/angular-toastr.js"></script>
 
-    <script type="text/javascript" src="resources/pageConfig.js"></script>
+    <script type="text/javascript" src="resources/config.js"></script>
     <script type="text/javascript" src="modules/security/securityModule.js"></script>
+    <script type="text/javascript" src="modules/framework/apiModule.js"></script>
     <script type="text/javascript" src="modules/framework/utilitiesModule.js"></script>
+    <script type="text/javascript" src="modules/framework/uiModule.js"></script>
     <script type="text/javascript" src="modules/framework/frameworkModule.js"></script>
+    <script type="text/javascript" src="modules/account/accountModule.js"></script>
+
     <script type="text/javascript" src="app.js"></script>
 
 </body>

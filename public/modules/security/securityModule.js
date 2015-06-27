@@ -8,20 +8,17 @@ var ccSecurity = angular.module('cc.security', []);
  * Security API
  */
 ccSecurity.factory('securityApi', ['$http', 'promiseService', function($http, promiseService) {
-	// var _host = 'http://www.codecraft.cn/'
-	var _host = 'http://localhost:3000/';
-
 	return {
 		login: function(email, password) {
 			return promiseService.wrap(function(promise) {
-				$http.post(_host + 'login', { email: email, password: password }).then(function(res) {
+				$http.post(apiConfig.host + 'login', { email: email, password: password }).then(function(res) {
 					promise.resolve(res.data);
 				}, promise.reject);
 			});
 		},
 		getCurrentUser: function() {
 			return promiseService.wrap(function(promise) {
-				$http.get(_host + 'current-user').then(function (res) {
+				$http.get(apiConfig.host + 'current-user').then(function (res) {
 					promise.resolve(res.data);
 				}, promise.reject);
 			});

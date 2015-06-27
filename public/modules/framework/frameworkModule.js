@@ -20,7 +20,8 @@ ccFramework.config(['$stateProvider', function($stateProvider) {
 /**
  * Controllers
  */
-ccFramework.controller('MainMenuController', ['$scope', 'frameworkModalFactory', function($scope, frameworkModalFactory) {
+ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 'security', 'frameworkModalFactory', function($rootScope, $scope, $state, security, frameworkModalFactory) {
+    // Initialization
     $scope.menuOpened = false;
     var _defaultMenu = {
         buttons: [
@@ -53,6 +54,12 @@ ccFramework.controller('MainMenuController', ['$scope', 'frameworkModalFactory',
         $scope.menuOpened = false;
     }
 
+
+    // System Events
+    $rootScope.$on('cc::security::login', function() {
+        $rootScope.user = security.currentUser();
+    });
+
     // Menu Events
     $scope.$on('cc-close-menu', function() {
         $scope.closeMenu();
@@ -68,15 +75,16 @@ ccFramework.controller('MainMenuController', ['$scope', 'frameworkModalFactory',
     $scope.$on('cc-reset-menu', function(buttons, navigations) {
         $scope.menu.buttons = angular.copy(_defaultMenu);
     });
+
+    // Profile Events
+    $scope.viewProfile = function() {
+        $state.go('profile', { id: $rootScope.user._id });
+    };
 }]);
 
-ccFramework.controller('HomePageController', ['$rootScope', '$scope', 'security', function($rootScope, $scope, security) {
+ccFramework.controller('HomePageController', ['$scope', function($scope) {
     $scope.pageConfig = pageConfig;
     $scope.language = 'chinese';
-
-    $rootScope.$on('cc::security::login', function() {
-        $scope.user = security.currentUser();
-    });
 }]);
 
 

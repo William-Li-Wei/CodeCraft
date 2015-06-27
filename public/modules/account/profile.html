@@ -1,0 +1,57 @@
+<div class="page-container row">
+    <div class="left-column col-sm-4">
+        <div class="profile-photo inner">
+            <img src="resources/img/avatar/avatar_steam_huo.jpg" alt="huo" class="img-circle">
+        </div>
+        <div class="profile-general inner">
+            <h4>{{ user.username }}</h4>
+            <hr/>
+            <span><i class="fa fa-clock-o"></i> 于 {{ user.createdAt | cnDate }} 加入源艺</span>
+            <hr/>
+            <div class="row">
+                <div class="col-sm-4">
+                    <span>
+                        <h4><a>{{ 0 }}</a></h4>
+                        文章
+                    </span>
+                </div>
+                <div class="col-sm-4">
+                    <span>
+                        <h4><a>{{ 0 }}</a></h4>
+                        推荐
+                    </span>
+                </div>
+                <div class="col-sm-4">
+                    <span>
+                        <h4><a>{{ 0 }}</a></h4>
+                        关注
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right-column col-sm-8">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active">
+                <a>
+                    <i class="fa fa-rss"></i> 相关动态
+                </a>
+            </li>
+            <li role="presentation">
+                <a>
+                    <i class="fa fa-tags"></i> <span ng-if="isVisitor">我</span><span ng-if="!isVisitor">Ta</span>的收藏
+                </a>
+            </li>
+            <li role="presentation">
+                <a>
+                    <i class="fa fa-newspaper-o"></i> 发布文章
+                </a>
+            </li>
+            <li role="presentation">
+                <a>
+                    <i class="fa fa-pencil-square-o"></i> 参与编辑
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

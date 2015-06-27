@@ -60,12 +60,13 @@ app.post('/login', security.login);
 app.post('/logout', security.logout);
 app.get('/current-user', security.sendCurrentUser);
 
+// Api endpoints
+require('./routes')(app, security);
+
 // Handle unmatched api
 app.get('/api/*', function(req, res) {
-    console.log('unknown api');
-    res.json(400, 'bad request');
+    res.status(400).json('Bad request');
 });
-
 app.get('/*',function(req, res) {
     res.sendFile('index.html', { root: config.server.distFolder });
 });
