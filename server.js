@@ -12,11 +12,11 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     cookieSession = require('cookie-session'),
 
-    config = require('./config.js'),
+    config = require('./config'),
     mongoose = require('mongoose'),
     passport = require('passport'),
     protectJSON = require('./lib/protectJSON'),
-    security = require('./lib/security.js');
+    security = require('./lib/security');
 
 var app = express();
 // Get connection to MongoDB
@@ -65,7 +65,7 @@ require('./routes')(app, security);
 
 // Handle unmatched api
 app.get('/api/*', function(req, res) {
-    res.status(400).json('Bad request');
+    res.status(400).json({ message: 'Bad request.' });
 });
 app.get('/*',function(req, res) {
     res.sendFile('index.html', { root: config.server.distFolder });
