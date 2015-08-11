@@ -146,28 +146,20 @@ ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'to
             return valid;
         };
         $scope.login = function() {
-            return promiseService.wrap(function(promise) {
-                security.login($scope.userData.email, $scope.userData.password)
-                    .then(function(user) {
-                        toastr.success('欢迎来到源艺, ' + user.username, '欢迎');
-                        promise.resolve(user);
-                        $scope.close();
-                    }, function(err) {
-                        $scope.message = security.lastMessage();
-                        promise.reject(err);
-                    });
-            })
+            return security.login($scope.userData.email, $scope.userData.password)
+                .then(function(user) {
+                    toastr.success('欢迎来到源艺, ' + user.username, '欢迎');
+                    $scope.close();
+                }, function(err) {
+                    $scope.message = security.lastMessage();
+                });
         };
         $scope.register = function() {
-            return promiseService.wrap(function(promise) {
-                security.register($scope.userData.email, $scope.userData.password, $scope.userData.username)
-                    .then(function(res) {
-                        $scope.message = security.lastMessage();
-                        promise.resove(res);
-                    }, function(err) {
-                        $scope.message = security.lastMessage();
-                        promise.reject(err);
-                    });
-            })
+            return security.register($scope.userData.email, $scope.userData.password, $scope.userData.username)
+                .then(function(res) {
+                    $scope.message = security.lastMessage();
+                }, function(err) {
+                    $scope.message = security.lastMessage();
+                });
         };
     }]);
