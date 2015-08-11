@@ -36,7 +36,7 @@
                 </li>
             </ul>
         </nav>
-        <div class="profile-photo-suspended bounce" ng-if="user && !menuOpened" ng-click="viewProfile()">
+        <div class="profile-photo-suspended bounce" ng-if="user && user._id && !menuOpened" ng-click="viewProfile()">
             <img src="resources/img/avatar/avatar_steam_huo_thumb.jpg" alt="huo" class="img-circle">
         </div>
     </div>
