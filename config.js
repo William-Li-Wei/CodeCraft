@@ -21,5 +21,9 @@ module.exports = {
         staticUrl: '/static',                               // The base url from which we serve static files (such as js, css and images)
         cookieSecret: 'YOURSECRET',                         // The secret for encrypting the cookie
         cookieName: 'YOURCOOKIENAME'                        // The cookie name
+    },
+    mail: {
+        emailAddress: 'EMAILADDRESS',                       // Email accound that used by the system
+        emailPassword: 'EMAILPASSWORD'                      // Email Password
     }
 };

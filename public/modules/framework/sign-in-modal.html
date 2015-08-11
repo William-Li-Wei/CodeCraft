@@ -1,13 +1,23 @@
-<form name="form" ng-keypress="keyPress($event)">
+<form name="form">
 <div class="modal-header">
     <h3>
     用户<span ng-if="mode === 'login'">登录</span><span ng-if="mode === 'register'">注册</span>
-    <button class="close" ng-click="close()">&times;</button>
+    <a class="close" ng-click="close()">&times;</a>
     </h3>    
 </div>
 <div class="modal-body">
 	<div ng-if="message">
-		<div class="alert alert-{{ message.type }}" role="alert">{{ message.text }}</div>
+		<div class="alert alert-{{ message.type }}" role="alert">
+			<i class="fa fa-info-circle" ng-if="message.type === 'info'"></i>
+			<i class="fa fa-warning" ng-if="message.type !== 'info'"></i>
+			{{ message.text }}
+		</div>
+	</div>
+	<div class="form-group" ng-if="mode === 'register'" ng-class="{ 'has-error': !form.username.$valid, 'has-success': form.username.$valid }">
+		<div class="input-group">
+			<span class="input-group-addon"><i class="fa fa-user"></i></span>
+			<input type="text" class="form-control" name="username" ng-model="userData.username" placeholder="用户名称" required minlength="3">
+		</div>
 	</div>
 	<div class="form-group" ng-class="{ 'has-error': !form.email.$valid, 'has-success': form.email.$valid }">
 		<div class="input-group">
@@ -30,11 +40,11 @@
 </div>
 <div class="modal-footer">
 	<a class="pull-left" ng-click="toggle()">
-		<span class="text-success" ng-if="mode === 'login'">还没有账户? 5秒注册</span>
-		<span class="text-success" ng-if="mode === 'register'">已经有户? 用户登录</span>
+		<span class="text-success" ng-if="mode === 'login'">还没有源艺账户? 5秒注册</span>
+		<span class="text-success" ng-if="mode === 'register'">我已注册源艺, 前往登录</span>
 	</a>
-	<button class="btn btn-sm" ng-click="close()">取消</button>
-	<button class="btn btn-success btn-sm" ng-click="login()" ng-if="mode === 'login'" ng-disabled="!formValid(form)">登录</button>
-	<button class="btn btn-success btn-sm" ng-click="register()" ng-if="mode === 'register'" ng-disabled="!formValid(form)">注册</button>
+	<button type="button" class="btn btn-sm" ng-click="close()">取消</button>
+	<button class="btn btn-success btn-sm" busy="login()" ng-if="mode === 'login'" busy-disabled="!formValid(form)">登录</button>
+	<button class="btn btn-success btn-sm" busy="register()" ng-if="mode === 'register'" busy-disabled="!formValid(form)">注册</button>
 </div>
 </form>

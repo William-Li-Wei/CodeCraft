@@ -7,4 +7,10 @@ module.exports = function(app, security) {
     app.get('/api/user/:id', function(req, res) {
         api.getUserById(req, res, '>>> user loading');
     });
+    app.post('/api/register', function(req, res) {
+        api.register(req, res, '>>> user registration');
+    });
+    app.post('/api/activate', function(req, res) {
+        api.activate(req, res, '>>> user activation');
+    });
 };

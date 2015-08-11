@@ -1,0 +1,10 @@
+<div class="page-container row">
+    <h3>Activation Page</h3>
+    <div ng-if="message">
+        <div class="alert alert-{{ message.type }}" role="alert">
+            <i class="fa fa-info-circle" ng-if="message.type === 'info'"></i>
+            <i class="fa fa-warning" ng-if="message.type !== 'info'"></i>
+            {{ message.text }}
+        </div>
+    </div>
+</div>

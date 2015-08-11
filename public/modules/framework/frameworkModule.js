@@ -41,7 +41,7 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
             { name: '数据统计', icon: 'area-chart' },
             { name: '关于本站', icon: 'sitemap' }
         ]
-    }
+    };
 
     $scope.menu = angular.copy(_defaultMenu);
 
@@ -49,10 +49,10 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
     // Interactions
     $scope.toggleMenu = function() {
         $scope.menuOpened = !$scope.menuOpened;
-    }
+    };
     $scope.closeMenu = function() {
         $scope.menuOpened = false;
-    }
+    };
 
 
     // System Events
@@ -108,8 +108,8 @@ ccFramework.factory('frameworkModalFactory', ['$modal', function($modal) {
 /**
  * Modal Controllers
  */
-ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'toastr', 'security',
-    function($scope, $modalInstance, toastr, security) {
+ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'toastr', 'security', 'promiseService',
+    function($scope, $modalInstance, toastr, security, promiseService) {
         // Initialization
         $scope.mode = 'login';
         $scope.userData = {};
@@ -117,17 +117,18 @@ ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'to
         // Interactions
         $scope.close = function() {
             $scope.cancel();
-        }
+        };
         $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
-        }
+        };
         $scope.toggle = function() {
             if($scope.mode === 'login') {
                 $scope.mode = 'register';
             } else {
                 $scope.mode = 'login';
             }
-        }
+            $scope.message = undefined;
+        };
         $scope.formValid = function(form) {
             var valid = true;
             if(!form.email.$valid) {
@@ -138,28 +139,27 @@ ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'to
                     valid = false;
                 }
             } else {
-                if(!form.password.$valid || $scope.userData.password !== $scope.userData.password2) {
+                if(!form.password.$valid || $scope.userData.password !== $scope.userData.password2 || !form.username.$valid) {
                     valid = false;
                 }
             }
             return valid;
-        }
+        };
         $scope.login = function() {
-            security.login($scope.userData.email, $scope.userData.password)
+            return security.login($scope.userData.email, $scope.userData.password)
                 .then(function(user) {
                     toastr.success('欢迎来到源艺, ' + user.username, '欢迎');
                     $scope.close();
                 }, function(err) {
                     $scope.message = security.lastMessage();
                 });
-        }
+        };
         $scope.register = function() {
-            console.log($scope.userData);
-        }
-        $scope.keyPress = function(event) {
-            if(event.which === 13) {
-                $scope.login();
-                event.preventDefault();
-            }
-        }
+            return security.register($scope.userData.email, $scope.userData.password, $scope.userData.username)
+                .then(function(res) {
+                    $scope.message = security.lastMessage();
+                }, function(err) {
+                    $scope.message = security.lastMessage();
+                });
+        };
     }]);
