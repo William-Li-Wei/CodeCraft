@@ -22,7 +22,7 @@ ccAccount.config(['$stateProvider', function($stateProvider) {
         .state('activation', {
             url: '/account/activate/:hashCode',
             templateUrl: '/modules/account/activate.html',
-            controller: 'ActivationController',
+            controller: 'ActivationController'
         });
 }]);
 
@@ -34,7 +34,11 @@ ccAccount.controller('ProfileController', ['$rootScope' ,'$scope', 'user' , func
     $scope.isVisitor =  $rootScope.user && $rootScope.user._id === $scope.user._id;
 }]);
 
-ccAccount.controller('ActivationController', ['$scope', '$state', '$stateParams', function($scope, $state, $stateParams) {
-    console.log('activation controller');
-    console.log($stateParams.hashCode);
+ccAccount.controller('ActivationController', ['$scope', '$state', '$stateParams', 'security', function($scope, $state, $stateParams, security) {
+    security.activate($stateParams.hashCode)
+        .then(function(res) {
+            $scope.message = security.lastMessage();
+        }, function(err) {
+            $scope.message = security.lastMessage();
+        });
 }]);

@@ -77,7 +77,7 @@ exports.register = function(req, res, context) {
                     userData.hashCode = new Buffer(hashedEmail).toString('base64');
 
                     // prepare email
-                    url = "http://" + config.server.ip + ":3000/activation/" + userData.hashCode;
+                    url = "http://" + config.server.ip + ":3000/account/activate/" + userData.hashCode;
                     mailContent = "亲爱的用户 " + userData.username + " ：\n\n" +
                         "欢迎加入源艺，开始您与众多IT爱好者分享源码，交流经验和探索发现的旅程。\n" +
                         "请点击下面的链接来激活您的账户：\n" + url + "\n" +
@@ -165,13 +165,13 @@ exports.activate = function(req, res, context) {
                 if(newUser) {
                     // delete pending
                     user = filterUser(newUser.toObject(), PURPOSE_LOGIN);
-                    Pending.remove({ hashCode: hashCode });
+                    return Pending.remove({ hashCode: hashCode });
                 } else {
                     return res.status(500).json({ message: 'Failed to create new user.' });
                 }
             }, function(err) { return res.status(500).json(err); })
             .then(function(result) {
-                if(result) {
+                if(result && result.result.n === 1) {
                     url = "http://" + config.server.ip + ":3000/";
                     var text = "亲爱的用户 " + user.username + " ：\n\n" +
                         "您的账户以经激活，可以通过以下链接访问源艺主页：\n" + url + "\n\n" +
