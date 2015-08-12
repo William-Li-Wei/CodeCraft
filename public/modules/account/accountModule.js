@@ -34,11 +34,31 @@ ccAccount.controller('ProfileController', ['$rootScope' ,'$scope', 'user' , func
     $scope.isVisitor =  $rootScope.user && $rootScope.user._id === $scope.user._id;
 }]);
 
-ccAccount.controller('ActivationController', ['$scope', '$state', '$stateParams', 'security', function($scope, $state, $stateParams, security) {
+ccAccount.controller('ActivationController', ['$scope', '$state', '$stateParams', '$interval', 'security', function($scope, $state, $stateParams, $interval, security) {
+    // activate user account
     security.activate($stateParams.hashCode)
         .then(function(res) {
             $scope.message = security.lastMessage();
+            _startCountDown();
         }, function(err) {
+            _startCountDown();
             $scope.message = security.lastMessage();
         });
+
+    // count down and jump to homepage
+    var countDown;
+    function _startCountDown() {
+        $scope.counter = 10;
+        countDown = $interval(_countingDown, 1000);
+    }
+    function _countingDown() {
+        $scope.counter--;
+        if($scope.counter === 0) {
+            _stopCountDown();
+        }
+    }
+    function _stopCountDown() {
+        $interval.cancel(countDown);
+        $state.go('home');
+    }
 }]);
