@@ -6,6 +6,7 @@ var Pending = require('../../models/pending').getPendingModel();
 var config = require('../../config');
 var encryptor = require('../../lib/encryptor');
 var mailer = require('../../lib/mailer');
+var Q = require('q');
 
 
 var PURPOSE_PROFILE = 'profile';
@@ -102,7 +103,7 @@ exports.register = function(req, res, context) {
             .then(function(result) {
                 // pending updated, resend invitation
                 if(result && result.nModified > 0) {
-                    sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
+                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
                 }
                 // creat pending
                 else if(result && result.nModified == 0) {
@@ -110,9 +111,20 @@ exports.register = function(req, res, context) {
                     return Pending.create(userData);
                 }
             })
-            .then(function(pending) {
-                if(pending) {
-                    sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
+            .then(function(result) {
+                // pending updated, email resent, stop chaining here.
+                if(result === 'Email sent.') {
+                    throw new Error(result);
+                }
+                // pending created, send invitation here.
+                else if(result && result !== 'Email sent.') {
+                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
+                }
+            })
+            .then(function(result) {
+                // invitation sent.
+                if(result === 'Email sent.') {
+                    return res.status(200).json({ message: result });
                 }
             })
             .onReject(function(err){
@@ -122,6 +134,9 @@ exports.register = function(req, res, context) {
                         break;
                     case 'Email not sent.':
                         return res.status(500).json({ message: 'Email not sent.' });
+                        break;
+                    case 'Email sent.':
+                        return res.status(200).json({ message: 'Email sent.' });
                         break;
                     default:
                         return res.status(500).json(err);
@@ -240,11 +255,15 @@ function sendEmail(address, subject, mailContent) {
     };
 
     // send mail with defined transport object
-    smtpTransport.sendMail(mailOptions, function(err, response){
-        // if you don't want to use this transport object anymore, uncomment following line
-        smtpTransport.close(); // shut down the connection pool, no more messages
-        if(err){
-            throw new Error('Email not sent.');
-        }
+    return Q.Promise(function(resolve, reject, notify) {
+        smtpTransport.sendMail(mailOptions, function(err, response){
+            // if you don't want to use this transport object anymore, uncomment following line
+            smtpTransport.close(); // shut down the connection pool, no more messages
+            if(err){
+                reject(new Error('Email not sent.'));
+            } else {
+                resolve('Email sent.');
+            }
+        });
     });
 }
