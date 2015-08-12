@@ -134,12 +134,6 @@ exports.register = function(req, res, context) {
     else {
         return res.status(400).json({ message: 'Bad request.' });
     }
-
-
-    // local functions
-    function return500(err) {
-        res.status(500).json(err);
-    }
 };
 
 /**
