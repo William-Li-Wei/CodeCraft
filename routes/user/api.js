@@ -66,7 +66,7 @@ exports.register = function(req, res, context) {
             .then(function(count) {
                 // email in use, return a message to client.
                 if(typeof count === 'number' && count > 0) {
-                    return res.status(200).json({ message: 'Email in use.' });
+                    throw new Error('Email in use.');
                 }
                 // email available, prepare invitation and create pending
                 else if(typeof count === 'number' && count == 0){
@@ -98,23 +98,36 @@ exports.register = function(req, res, context) {
                         { username: userData.username, password: hashedPassword, hashCode:  userData.hashCode }
                     ).exec();
                 }
-            }, return500)
+            })
             .then(function(result) {
                 // pending updated, resend invitation
                 if(result && result.nModified > 0) {
-                    sendEmail(res, userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent, true);
+                    sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
                 }
                 // creat pending
                 else if(result && result.nModified == 0) {
                     userData.created = new Date();
                     return Pending.create(userData);
                 }
-            }, return500)
+            })
             .then(function(pending) {
                 if(pending) {
-                    sendEmail(res, userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent, true);
+                    sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
                 }
-            }, return500)
+            })
+            .onReject(function(err){
+                switch(err.message) {
+                    case 'Pending not found.':
+                        return res.status(404).json({ message: 'Pending not found.' });
+                        break;
+                    case 'Email not sent.':
+                        return res.status(500).json({ message: 'Email not sent.' });
+                        break;
+                    default:
+                        return res.status(500).json(err);
+                        break;
+                }
+            })
             .end();
     }
     // invalid request
@@ -158,20 +171,18 @@ exports.activate = function(req, res, context) {
                     return User.create(newUser);
                 } else {
                     // Pending not found, could be expired
-                    res.status(404).json({ message: 'Pending not found.' });
+                    throw new Error('Pending not found.');
                 }
-            }, function(err) { return res.status(500).json(err); })
+            })
             .then(function(newUser) {
                 if(newUser) {
                     // delete pending
                     user = filterUser(newUser.toObject(), PURPOSE_LOGIN);
                     return Pending.remove({ hashCode: hashCode });
-                } else {
-                    return res.status(500).json({ message: 'Failed to create new user.' });
                 }
-            }, function(err) { return res.status(500).json(err); })
+            })
             .then(function(result) {
-                if(result && result.result.n === 1) {
+                if(result) {
                     url = "http://" + config.server.ip + ":3000/";
                     var text = "亲爱的用户 " + user.username + " ：\n\n" +
                         "您的账户以经激活，可以通过以下链接访问源艺主页：\n" + url + "\n\n" +
@@ -181,12 +192,20 @@ exports.activate = function(req, res, context) {
                         "Your account at CodeCraft has been activated, and you can follow the link bellow to visit CodeCraft:" + url + "\n\n" +
                         "Kind regards\n" +
                         "The CodeCraft Team";
-                    sendEmail(res, user.email, "您的源艺 codecraft.cn 账户已激活", text, false);
+                    sendEmail(user.email, "您的源艺 codecraft.cn 账户已激活", text);
                     return res.status(200).json(user);
-                } else {
-                    return res.status(500).json({ message: 'Failed to delete the used pending.' });
                 }
-            }, function(err) { return res.status(500).json(err); })
+            })
+            .onReject(function(err){
+                switch(err.message) {
+                    case 'Pending not found.':
+                        return res.status(404).json({ message: 'Pending not found.' });
+                        break;
+                    default:
+                        return res.status(500).json(err);
+                        break;
+                }
+            })
             .end();
     } else {
         return res.status(400).json({ message: 'Bad request.' });
@@ -215,7 +234,7 @@ function filterUser(user, purpose) {
     }
     return filteredUser;
 }
-function sendEmail(res, address, subject, mailContent, giveResponse) {
+function sendEmail(address, subject, mailContent) {
     var smtpTransport = mailer.smtpTransport;
 
     // setup e-mail data with unicode symbols
@@ -230,12 +249,8 @@ function sendEmail(res, address, subject, mailContent, giveResponse) {
     smtpTransport.sendMail(mailOptions, function(err, response){
         // if you don't want to use this transport object anymore, uncomment following line
         smtpTransport.close(); // shut down the connection pool, no more messages
-        if(giveResponse) {
-            if(err){
-                return res.status(500).json(err);
-            }else{
-                return res.status(200).json({ message: 'Email sent.' });
-            }
+        if(err){
+            throw new Error('Email not sent.');
         }
     });
 }
