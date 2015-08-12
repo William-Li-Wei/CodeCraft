@@ -3,6 +3,7 @@
  */
 var User = require('../../models/user').getUserModel();
 var Pending = require('../../models/pending').getPendingModel();
+var Reset = require('../../models/reset').getResetModel();
 var config = require('../../config');
 var encryptor = require('../../lib/encryptor');
 var mailer = require('../../lib/mailer');
@@ -221,6 +222,104 @@ exports.activate = function(req, res, context) {
     }
 };
 
+/**
+ * Send a password reset link to a registered email
+ * @param req
+ * @param res
+ * @param context
+ */
+exports.findPassword = function(req, res, context) {
+    console.log(context);
+    var userData = req.body;
+    var url;
+    var mailContent;
+
+
+    // validate the request
+    if(userData && userData.email && typeof userData.email === 'string') {
+        userData.email = userData.email.toLowerCase();
+        // check availability of email
+        User.findOne({ email: userData.email }).exec()
+            .then(function(user) {
+                // email not found, return a message to client.
+                if(!user) {
+                    throw new Error('Email not found.');
+                }
+                // email found, prepare password reset link and create reset
+                else {
+                    // create hashed email
+                    var hashedEmail = encryptor.createHash(userData.email);
+                    userData.hashCode = new Buffer(hashedEmail).toString('base64');
+                    userData.username = user.toObject().username;
+
+                    // prepare email
+                    url = "http://" + config.server.ip + ":3000/account/reset-password/" + userData.hashCode;
+                    mailContent = "亲爱的用户 " + userData.username + " ：\n\n" +
+                        "您刚刚申请了重置密码服务，请点击下面的链接来进行重置：\n" + url + "\n" +
+                        "如果您无法通过链接进行跳转，请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
+                        "如果您没有申请重置密码，可能有人误用了您的邮箱地址，请无视这封邮件。\n\n" +
+                        "祝您体验愉快\n" +
+                        "源艺\n\n\n" +
+                        "Dear " + userData.username + " :\n\n" +
+                        "We just received your request for a password reset, please click on the link below to proceed:\n" + url + "\n" +
+                        "If clicking on the link doesn't work, try copying and pasting it into your browser.\n\n" +
+                        "If you didn't make the request, your email address might has been used by others as wrong input, please ignore this email.\n\n" +
+                        "Kind regards\n" +
+                        "The CodeCraft Team";
+                    // try to update an existing pending
+                    return Reset.count({ email: userData.email }).exec();
+                }
+            })
+            .then(function(count) {
+                // reset found, resend link
+                if(typeof count === 'number' && count > 0) {
+                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的密码重置链接", mailContent);
+                }
+                // reset not found, create reset and then send email
+                else if(typeof count === 'number' && count == 0) {
+                    userData.created = new Date();
+                    return Reset.create(userData);
+                }
+            })
+            .then(function(result) {
+                // link resent, stop chaining here.
+                if(result === 'Email sent.') {
+                    throw new Error(result);
+                }
+                // reset created, send link here.
+                else if(result && result !== 'Email sent.') {
+                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的密码重置链接", mailContent);
+                }
+            })
+            .then(function(result) {
+                // link sent.
+                if(result === 'Email sent.') {
+                    return res.status(200).json({ message: result });
+                }
+            })
+            .onReject(function(err){
+                switch(err.message) {
+                    case 'Email not found.':
+                        return res.status(404).json({ message: 'Email not found.' });
+                        break;
+                    case 'Email not sent.':
+                        return res.status(500).json({ message: 'Email not sent.' });
+                        break;
+                    case 'Email sent.':
+                        return res.status(200).json({ message: 'Email sent.' });
+                        break;
+                    default:
+                        return res.status(500).json(err);
+                        break;
+                }
+            })
+            .end();
+    }
+    // invalid request
+    else {
+        return res.status(400).json({ message: 'Bad request.' });
+    }
+};
 
 /**
  * Supportive functions

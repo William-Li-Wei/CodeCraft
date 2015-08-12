@@ -23,6 +23,11 @@ ccAccount.config(['$stateProvider', function($stateProvider) {
             url: '/account/activate/:hashCode',
             templateUrl: '/modules/account/activate.html',
             controller: 'ActivationController'
+        })
+        .state('reset', {
+            url: '/account/reset-password/:hashCode',
+            templateUrl: '/modules/account/reset-password.html',
+            controller: 'ResetController'
         });
 }]);
 
@@ -61,4 +66,8 @@ ccAccount.controller('ActivationController', ['$scope', '$state', '$stateParams'
         $interval.cancel(countDown);
         $state.go('home');
     }
+}]);
+
+ccAccount.controller('ResetController', ['$scope', '$state', '$stateParams', 'security', function($scope, $state, $stateParams, security) {
+    console.log('password resetting');
 }]);

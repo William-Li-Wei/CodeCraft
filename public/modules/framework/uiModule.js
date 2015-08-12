@@ -27,7 +27,7 @@ ccUI.filter('cnDate', function() {
 ccUI.directive('busy', [function() {
     return {
         restrict: 'A',
-        template: '<button class="btn btn-success btn-sm" ng-click="click()" ng-disabled="disabled() || isBusy"> <span ng-if="isBusy"><i ng-class="icon"></i></span> <span ng-transclude></span> </button>',
+        template: '<button class="btn btn-sm" ng-click="click()" ng-disabled="disabled() || isBusy"> <span ng-if="isBusy"><i ng-class="icon"></i></span> <span ng-transclude></span> </button>',
         replace: true,
         transclude: true,
         scope: {

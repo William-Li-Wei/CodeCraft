@@ -40,9 +40,11 @@
 </div>
 <div class="modal-footer">
 	<a class="pull-left" ng-click="toggle()">
-		<span class="text-success" ng-if="mode === 'login'">还没有源艺账户? 5秒注册</span>
-		<span class="text-success" ng-if="mode === 'register'">我已注册源艺, 前往登录</span>
+		<span class="text-success" ng-if="mode === 'login'">还没有源艺账户? 5秒注册  </span>
+		<span class="text-success" ng-if="mode === 'register'">我已注册源艺, 前往登录  </span>
 	</a>
+
+	<button type="button" class="btn btn-sm" busy="findPassword()" ng-if="mode === 'login'" busy-disabled="!form.email.$valid">找回密码</button>
 	<button type="button" class="btn btn-sm" ng-click="close()">取消</button>
 	<button class="btn btn-success btn-sm" busy="login()" ng-if="mode === 'login'" busy-disabled="!formValid(form)">登录</button>
 	<button class="btn btn-success btn-sm" busy="register()" ng-if="mode === 'register'" busy-disabled="!formValid(form)">注册</button>
