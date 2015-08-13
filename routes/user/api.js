@@ -48,7 +48,7 @@ exports.getUserById = function(req, res, context) {
 };
 
 /**
- * Register a new user and send out the activation email
+ * Register a new user(create a pending) and send out the activation email
  * @param req
  * @param res
  * @param context
@@ -97,7 +97,7 @@ exports.register = function(req, res, context) {
                     // try to update an existing pending
                     return Pending.update(
                         { email: userData.email },
-                        { username: userData.username, password: hashedPassword, hashCode:  userData.hashCode }
+                        { username: userData.username, password: hashedPassword, hashCode:  userData.hashCode, createdAt: new Date() }
                     ).exec();
                 }
             })
@@ -153,7 +153,7 @@ exports.register = function(req, res, context) {
 };
 
 /**
- *
+ * Activate an user account by creating the user in DB and removing the pending.
  * @param req
  * @param res
  * @param context
@@ -320,6 +320,95 @@ exports.findPassword = function(req, res, context) {
         return res.status(400).json({ message: 'Bad request.' });
     }
 };
+
+/**
+ * Update the user's password by providing the hash code and new password.
+ * @param req
+ * @param res
+ * @param context
+ */
+exports.resetPassword = function(req, res, context) {
+    console.log(context);
+    var userData = req.body;
+    var user = undefined;
+    var url;
+
+    if(userData.hashCode) {
+        Reset.findOne({ hashCode: userData.hashCode }).exec()
+            .then(function(reset) {
+                if(reset) {
+                    // find user by email
+                    var email = reset.toObject().email;
+                    return User.findOne({ email: email }).exec();
+                } else {
+                    // reset not found, could be expired
+                    throw new Error('Reset not found.');
+                }
+            })
+            .then(function(resUser) {
+                // user found, update password
+                if(resUser) {
+                    user = resUser.toObject();
+                    var hashedPassword = encryptor.createHash(userData.password);
+                    return User.update(
+                        { email: user.email },
+                        { password: hashedPassword, updatedAt: new Date(), updatedBy: 'system' }
+                    ).exec();
+                }
+                // user not found, this should never happen unless the user is deleted from DB while the reset is still there.
+                else {
+                    throw new Error('User not found.');
+                }
+            })
+            .then(function(result) {
+                // password updated, send email
+                if(result && result.nModified > 0) {
+                    url = "http://" + config.server.ip + ":3000/";
+                    // todo, update the email content;
+                    var text = "亲爱的用户 " + user.username + " ：\n\n" +
+                        "您的账户以经激活，可以通过以下链接访问源艺主页：\n" + url + "\n\n" +
+                        "祝您在源艺网体验愉快\n" +
+                        "源艺\n\n\n" +
+                        "Dear " + user.username + " :\n\n" +
+                        "Your account at CodeCraft has been activated, and you can follow the link bellow to visit CodeCraft:" + url + "\n\n" +
+                        "Kind regards\n" +
+                        "The CodeCraft Team";
+                    return sendEmail(user.email, "您的源艺 codecraft.cn 密码已重置", text);
+                }
+                // password not updated, again this should never happen.
+                else if(result && result.nModified == 0) {
+                    throw new Error('User not found.');
+                }
+            })
+            .then(function(result) {
+                // email sent and delete the reset
+                if(result === 'Email sent.') {
+                    return Reset.remove({ email: user.email });
+                }
+            })
+            .then(function(result) {
+                if(result) {
+                    return res.status(200).json({ message: 'Password reset.' });
+                }
+            })
+            .onReject(function(err){
+                switch(err.message) {
+                    case 'Reset not found.':
+                        return res.status(404).json({ message: 'Reset not found.' });
+                        break;
+                    case 'Email not sent.':
+                        return res.status(500).json({ message: 'Email not sent.' });
+                        break;
+                    default:
+                        return res.status(500).json(err);
+                        break;
+                }
+            })
+            .end();
+    } else {
+        return res.status(400).json({ message: 'Bad request.' });
+    }
+}
 
 /**
  * Supportive functions
