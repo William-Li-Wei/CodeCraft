@@ -68,6 +68,39 @@ ccAccount.controller('ActivationController', ['$scope', '$state', '$stateParams'
     }
 }]);
 
-ccAccount.controller('ResetController', ['$scope', '$state', '$stateParams', 'security', function($scope, $state, $stateParams, security) {
-    console.log('password resetting');
+ccAccount.controller('ResetController', ['$scope', '$state', '$stateParams', '$interval', 'security', function($scope, $state, $stateParams, $interval, security) {
+    $scope.userData = {
+        hashCode: $stateParams.hashCode
+    };
+    $scope.reset = function() {
+        return security.resetPassword($scope.userData.hashCode, $scope.userData.password)
+            .then(function(res) {
+                $scope.message = security.lastMessage();
+                _startCountDown();
+            }, function(err) {
+                $scope.message = security.lastMessage();
+                _startCountDown();
+            });
+    };
+
+    $scope.toHomepage = function() {
+      $state.go('home');
+    };
+
+    // count down and jump to homepage
+    var countDown;
+    function _startCountDown() {
+        $scope.counter = 10;
+        countDown = $interval(_countingDown, 1000);
+    }
+    function _countingDown() {
+        $scope.counter--;
+        if($scope.counter === 0) {
+            _stopCountDown();
+        }
+    }
+    function _stopCountDown() {
+        $interval.cancel(countDown);
+        $state.go('home');
+    }
 }]);

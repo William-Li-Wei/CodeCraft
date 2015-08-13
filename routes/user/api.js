@@ -80,11 +80,11 @@ exports.register = function(req, res, context) {
 
                     // prepare email
                     url = "http://" + config.server.ip + ":3000/account/activate/" + userData.hashCode;
-                    mailContent = "亲爱的用户 " + userData.username + " ：\n\n" +
-                        "欢迎加入源艺，开始您与众多IT爱好者分享源码，交流经验和探索发现的旅程。\n" +
-                        "请点击下面的链接来激活您的账户：\n" + url + "\n" +
-                        "如果您无法通过链接进行跳转，请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
-                        "如果您没有在源艺进行注册，可能有人误用了您的邮箱地址，请无视这封邮件。\n\n" +
+                    mailContent = "亲爱的用户 " + userData.username + " :\n\n" +
+                        "欢迎加入源艺,开始您与众多IT爱好者分享源码,交流经验和探索发现的旅程。\n" +
+                        "请点击下面的链接来激活您的账户:\n" + url + "\n" +
+                        "如果您无法通过链接进行跳转,请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
+                        "如果您没有在源艺进行注册,可能有人误用了您的邮箱地址,请无视这封邮件。\n\n" +
                         "祝您体验愉快\n" +
                         "源艺\n\n\n" +
                         "Dear " + userData.username + " :\n\n" +
@@ -194,8 +194,8 @@ exports.activate = function(req, res, context) {
             .then(function(result) {
                 if(result) {
                     url = "http://" + config.server.ip + ":3000/";
-                    var text = "亲爱的用户 " + user.username + " ：\n\n" +
-                        "您的账户以经激活，可以通过以下链接访问源艺主页：\n" + url + "\n\n" +
+                    var text = "亲爱的用户 " + user.username + " :\n\n" +
+                        "您的账户以经激活,可以通过以下链接访问源艺主页:\n" + url + "\n\n" +
                         "祝您在源艺网体验愉快\n" +
                         "源艺\n\n\n" +
                         "Dear " + user.username + " :\n\n" +
@@ -254,10 +254,10 @@ exports.findPassword = function(req, res, context) {
 
                     // prepare email
                     url = "http://" + config.server.ip + ":3000/account/reset-password/" + userData.hashCode;
-                    mailContent = "亲爱的用户 " + userData.username + " ：\n\n" +
-                        "您刚刚申请了重置密码服务，请点击下面的链接来进行重置：\n" + url + "\n" +
-                        "如果您无法通过链接进行跳转，请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
-                        "如果您没有申请重置密码，可能有人误用了您的邮箱地址，请无视这封邮件。\n\n" +
+                    mailContent = "亲爱的用户 " + userData.username + " :\n\n" +
+                        "您刚刚申请了重置密码服务,请点击下面的链接来进行重置:\n" + url + "\n" +
+                        "如果您无法通过链接进行跳转,请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
+                        "如果您没有申请重置密码,可能有人误用了您的邮箱地址,请无视这封邮件。\n\n" +
                         "祝您体验愉快\n" +
                         "源艺\n\n\n" +
                         "Dear " + userData.username + " :\n\n" +
@@ -333,7 +333,7 @@ exports.resetPassword = function(req, res, context) {
     var user = undefined;
     var url;
 
-    if(userData.hashCode) {
+    if(userData.hashCode && userData.password) {
         Reset.findOne({ hashCode: userData.hashCode }).exec()
             .then(function(reset) {
                 if(reset) {
@@ -350,6 +350,7 @@ exports.resetPassword = function(req, res, context) {
                 if(resUser) {
                     user = resUser.toObject();
                     var hashedPassword = encryptor.createHash(userData.password);
+                    console.log('>>>>>>>>>>> ', userData.password);
                     return User.update(
                         { email: user.email },
                         { password: hashedPassword, updatedAt: new Date(), updatedBy: 'system' }
@@ -364,13 +365,12 @@ exports.resetPassword = function(req, res, context) {
                 // password updated, send email
                 if(result && result.nModified > 0) {
                     url = "http://" + config.server.ip + ":3000/";
-                    // todo, update the email content;
-                    var text = "亲爱的用户 " + user.username + " ：\n\n" +
-                        "您的账户以经激活，可以通过以下链接访问源艺主页：\n" + url + "\n\n" +
+                    var text = "亲爱的用户 " + user.username + " :\n\n" +
+                        "您的密码以经重置,可以通过以下链接访问源艺主页:\n" + url + "\n\n" +
                         "祝您在源艺网体验愉快\n" +
                         "源艺\n\n\n" +
                         "Dear " + user.username + " :\n\n" +
-                        "Your account at CodeCraft has been activated, and you can follow the link bellow to visit CodeCraft:" + url + "\n\n" +
+                        "Your password has been reset, and you can follow the link bellow to visit CodeCraft:\n" + url + "\n\n" +
                         "Kind regards\n" +
                         "The CodeCraft Team";
                     return sendEmail(user.email, "您的源艺 codecraft.cn 密码已重置", text);
