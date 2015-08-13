@@ -38,6 +38,20 @@ ccSecurity.factory('securityApi', ['$http', 'promiseService', function($http, pr
 						promise.resolve(res.data);
 					}, promise.reject);
 			});
+		},
+		findPassword: function(email) {
+			return promiseService.wrap(function(promise) {
+				$http.post(apiConfig.host + 'api/find-password', { email: email }).then(function(res) {
+					promise.resolve(res.data);
+				}, promise.reject);
+			});
+		},
+		resetPassword: function(hashCode, password) {
+			return promiseService.wrap(function(promise) {
+				$http.post(apiConfig.host + 'api/reset-password', { hashCode: hashCode, password: password }).then(function(res) {
+					promise.resolve(res.data);
+				}, promise.reject);
+			});
 		}
 	}
 }]);
@@ -103,12 +117,12 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								if(err.status === 404) {
 									_lastMessage = {
 										type: 'danger',
-										text: '身份验证失败，请检查您输入的电子邮箱和登录密码.'
+										text: '身份验证失败, 请检查您输入的电子邮箱和登录密码.'
 									};
 								} else {
 									_lastMessage = {
 										type: 'danger',
-										text: '身份验证遇到问题，请稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '身份验证遇到问题, 请稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
 									}
 								}
 								_removeUser();
@@ -123,13 +137,13 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								if(res.message == 'Email in use.') {
 									_lastMessage = {
 										type: 'warning',
-										text: '该邮箱已经被注册，请尝试其他邮箱或直接进行登录.'
+										text: '该邮箱已经被注册, 请您尝试其他邮箱或直接进行登录.'
 									};
 								}
 								if(res.message == 'Email sent.') {
 									_lastMessage = {
 										type: 'info',
-										text: '验证邮件发送成功，请登录邮箱并激活账户.'
+										text: '验证邮件发送成功, 请登录邮箱并激活您的账户.'
 									};
 								}
 								promise.resolve();
@@ -142,10 +156,9 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								} else {
 									_lastMessage = {
 										type: 'danger',
-										text: '用户注册遇到问题，请稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '用户注册遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
 									}
 								}
-								_removeUser();
 								promise.reject(err);
 							});
 					});
@@ -169,13 +182,67 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								else if(err.status === 404){
 									_lastMessage = {
 										type: 'warning',
-										text: '您的激活链接已经过期, 请重新注册并获得心得激活链接.'
+										text: '您的激活链接已经过期, 请重新注册并获得新的激活链接.'
 									}
 								}
 								else {
 									_lastMessage = {
 										type: 'danger',
-										text: '账户激活遇到问题，请稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '账户激活遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+									}
+								}
+								promise.reject(err);
+							});
+					});
+				},
+				findPassword: function(email) {
+					return promiseService.wrap(function(promise) {
+						securityApi.findPassword(email)
+							.then(function(res) {
+								if(res.message == 'Email sent.') {
+									_lastMessage = {
+										type: 'info',
+										text: '密码重置链接发送成功, 请登录邮箱并重置您的密码.'
+									};
+								}
+								promise.resolve();
+							}, function(err) {
+								if(err.status === 404) {
+									_lastMessage = {
+										type: 'warning',
+										text: '该邮箱尚未注册, 请您检查输入的电子邮箱或进行注册.'
+									}
+								} else {
+									_lastMessage = {
+										type: 'danger',
+										text: '找回密码遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+									}
+								}
+								promise.reject(err);
+							});
+					});
+				},
+				resetPassword: function(hashCode, password) {
+					return promiseService.wrap(function(promise) {
+						securityApi.resetPassword(hashCode, password)
+							.then(function(res) {
+								if(res.message == 'Password reset.') {
+									_lastMessage = {
+										type: 'info',
+										text: '您的源艺密码已重置, 可以随时使用新密码进行登录.'
+									};
+								}
+								promise.resolve();
+							}, function(err) {
+								if(err.status === 404) {
+									_lastMessage = {
+										type: 'warning',
+										text: '您的重置链接已过期, 请在登录页面输入电子邮箱并重新获取密码重置链接, 如有进一步的问题, 请联系 codecraft.cn@gmail.com ,我们会努力解决您的问题.'
+									}
+								} else {
+									_lastMessage = {
+										type: 'danger',
+										text: '重置密码遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
 									}
 								}
 								promise.reject(err);

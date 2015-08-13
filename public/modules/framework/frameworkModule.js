@@ -162,4 +162,12 @@ ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'to
                     $scope.message = security.lastMessage();
                 });
         };
+        $scope.findPassword = function() {
+            return security.findPassword($scope.userData.email)
+                .then(function(res) {
+                    $scope.message = security.lastMessage();
+                }, function(err) {
+                    $scope.message = security.lastMessage();
+                });
+        }
     }]);
