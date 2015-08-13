@@ -20,7 +20,7 @@ ccFramework.config(['$stateProvider', function($stateProvider) {
 /**
  * Controllers
  */
-ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 'security', 'frameworkModalFactory', function($rootScope, $scope, $state, security, frameworkModalFactory) {
+ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 'toastr', 'security', 'frameworkModalFactory', function($rootScope, $scope, $state, toastr, security, frameworkModalFactory) {
     // Initialization
     $scope.menuOpened = false;
     var _defaultMenu = {
@@ -35,13 +35,43 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
             }
         ],
         navigations: [
-            { name: '源艺首页', icon: 'home' },
+            {
+                name: '源艺首页',
+                icon: 'home',
+                click: function() {
+                    $scope.closeMenu();
+                    $state.go('home');
+                }
+            },
             { name: '专辑大厅', icon: 'institution'},
             { name: '讨论专区', icon: 'comments-o' },
             { name: '数据统计', icon: 'area-chart' },
             { name: '关于本站', icon: 'sitemap' }
         ]
     };
+
+    var _availableButtons = {
+        signIn: {
+            name: '登录注册',
+            icon: 'sign-in',
+            click: function() {
+                $scope.closeMenu();
+                frameworkModalFactory.showSignInModal();
+            }
+        },
+        signOut: {
+            name: '退出登录',
+            icon: 'sign-out',
+            click: function() {
+                security.logout()
+                    .then(function(res) {
+                        toastr.success('bye~');
+                    });
+                $scope.closeMenu();
+            }
+        },
+
+    }
 
     $scope.menu = angular.copy(_defaultMenu);
 
@@ -56,34 +86,50 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
 
 
     // System Events
-    $rootScope.$on('cc::security::login', function() {
+    $scope.$on('cc::security::login', function() {
         $rootScope.user = security.currentUser();
+        _setButtons();
+    });
+    $scope.$on('cc::security::logout', function() {
+        $rootScope.user = security.currentUser();
+        _setButtons();
     });
 
     // Menu Events
-    $scope.$on('cc-close-menu', function() {
+    $scope.$on('cc::menu::close', function() {
         $scope.closeMenu();
     });
-    $scope.$on('cc-set-menu', function(buttons, navigations) {
-        if(buttons && buttons instanceof Array) {
-            $scope.menu.buttons = angular.copy(buttons);
-        }
-        if(navigations && navigations instanceof Array) {
-            $scope.menu.navigations = angular.copy(navigations);
-        }
-    });
-    $scope.$on('cc-reset-menu', function(buttons, navigations) {
+    $scope.$on('cc::menu::reset', function() {
         $scope.menu.buttons = angular.copy(_defaultMenu);
     });
+    $scope.$on('cc::menu::set-buttons', _setButtons);
+
+    function _setButtons(buttons) {
+        var buttonList = [];
+        if($rootScope.user && $rootScope.user._id) {
+            buttonList.push(_availableButtons.signOut);
+        } else {
+            buttonList.push(_availableButtons.signIn)
+        }
+        angular.forEach(buttons, function(buttonName) {
+            if(_availableButtons[buttonName]) {
+                buttonList.push(_availableButtons[buttonName]);
+            }
+        });
+        $scope.menu.buttons = angular.copy(buttonList);
+    }
+
 
     // Profile Events
     $scope.viewProfile = function() {
-        $state.go('profile', { id: $rootScope.user._id });
+        if($rootScope.user && $rootScope.user._id) {
+            $state.go('profile', { id: $rootScope.user._id });
+        }
     };
 }]);
 
 ccFramework.controller('HomePageController', ['$scope', function($scope) {
-    $scope.pageConfig = pageConfig;
+    $scope.languageConfig = languageConfig;
     $scope.language = 'chinese';
 }]);
 

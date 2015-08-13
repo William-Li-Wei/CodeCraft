@@ -23,6 +23,13 @@ ccSecurity.factory('securityApi', ['$http', 'promiseService', function($http, pr
 				}, promise.reject);
 			});
 		},
+		logout: function() {
+			return promiseService.wrap(function(promise) {
+				$http.post(apiConfig.host + 'logout').then(function(res) {
+					promise.resolve(res.data);
+				}, promise.reject);
+			});
+		},
 		register: function(email, password, username) {
 			return promiseService.wrap(function(promise) {
 				$http.post(apiConfig.host + 'api/register', { email:email, password: password, username: username })
@@ -61,10 +68,6 @@ ccSecurity.factory('securityApi', ['$http', 'promiseService', function($http, pr
  * Security Services
  */
 ccSecurity.provider('security', ['$httpProvider', function() {
-	var _defaultUser = {
-		email: ''
-	};
-
 	var _lastMessage = undefined;
 
     return {
@@ -82,15 +85,16 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 			});
 
 			function _getUser() {
-				return localStore.getItem('user') || _defaultUser;
+				return localStore.getItem('user');
 			}
 			function _setUser(user) {
-				user = user || _defaultUser;
+				user = user;
 				localStore.setItem('user', user);
 				return user;
 			}
 			function _removeUser() {
 				localStore.removeItem('user');
+				_user = undefined;
 			}
 
 			return {
@@ -130,6 +134,19 @@ ccSecurity.provider('security', ['$httpProvider', function() {
     						});
     				});
     			},
+				logout: function() {
+					return promiseService.wrap(function(promise) {
+						securityApi.logout()
+							.then(function(res) {
+								_removeUser();
+								$rootScope.$broadcast('cc::security::logout');
+								promise.resolve();
+							}, function(err) {
+								_removeUser();
+								promise.reject(err);
+							});
+					});
+				},
 				register: function(email, password, username) {
 					return promiseService.wrap(function(promise) {
 						securityApi.register(email, password, username)
