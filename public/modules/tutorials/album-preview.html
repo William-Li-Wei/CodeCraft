@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-sm-4">
+        <div class="profile-photo inner">
+            <img src="resources/img/avatar/avatar_steam_huo.jpg" alt="huo" class="img-circle">
+        </div>
+        <div class="center">
+            <h4>{{ album.author.name }}</h4>
+            <span><i class="fa fa-clock-o"></i> 于 {{ user.createdAt | cnDate }} 加入源艺</span>
+            <br/>
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <span>
+                        <i class="fa fa-file"></i> 0
+                    </span>
+                    <span>
+                        <i class="fa fa-trophy"></i> {{ 0 }}
+                    </span>
+                    <span>
+                        <i class="fa fa-star"></i> {{ 0 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="preview-intro">
+            <h3>
+                {{ album.name }}
+                <span class="pull-right pointer" ng-click="closePreview()">&#10006;</span>
+            </h3>
+            <p> {{ album.introduction }} </p>
+        </div>
+        <div class="preview-actions">
+            <div class="pull-right">
+                <span>
+                    <i class="fa fa-eye"></i> 12 阅读 &nbsp;&nbsp;
+                </span>
+                <span type="button" class="btn btn-sm">
+                    <i class="fa fa-thumbs-up"></i> 3 推荐 &nbsp;&nbsp;
+                </span>
+                <span type="button" class="btn btn-sm">
+                    <i class="fa fa-bookmark"></i> 3 收藏 &nbsp;&nbsp;
+                </span>
+                <button type="button" class="btn btn-sm btn-success" busy="viewAlbum()">详细内容</button>
+            </div>
+        </div>
+    </div>
+</div>

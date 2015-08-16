@@ -8,6 +8,8 @@ body  {
     width: 80%;
     margin-left: 10%;
     margin-right: 10%;
+    -webkit-transition: height 0.2s;
+    transition: height 0.2s;
 }
 
 .footer {
@@ -25,6 +27,14 @@ body  {
 
 a {
     cursor:  pointer;
+}
+
+.center {
+    text-align: center;
+}
+
+span.pointer {
+    cursor: pointer;
 }
 
 /**********  Home Page  **********/
@@ -81,6 +91,7 @@ a {
 
 
 /**********  Content Page  **********/
+
 .left-column {
 }
 .inner {
@@ -117,6 +128,46 @@ a {
 }
 .profile-general i {
     color: darkgray;
+}
+
+
+/**********  Tutorials  **********/
+
+.album-frame {
+    float: left;
+    display: block;
+    width: 222px;
+    height: 246px;
+    margin-top: 30px;
+    margin-left: 15px;
+}
+.album {
+    position: relative;
+    display: block;
+    width: 180px;
+    height: 212px;
+    background: darkgray;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+
+    -webkit-transition: top 0.2s;
+    transition: top 0.2s;
+}
+.album-preview {
+    width: 100%;
+    height: 0;
+    background: darkgray;
+    overflow: hidden;
+    padding: 10px 20px 0 10px;
+    border-radius: 4px;
+
+    -webkit-transition: height 0.2s;
+    transition: height 0.2s;
+}
+
+.album-preview .preview-intro {
+    height: 220px;
 }
 
 

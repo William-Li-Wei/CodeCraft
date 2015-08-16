@@ -43,7 +43,14 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
                     $state.go('home');
                 }
             },
-            { name: '专辑大厅', icon: 'institution'},
+            {
+                name: '专辑大厅',
+                icon: 'institution',
+                click: function() {
+                    $scope.closeMenu();
+                    $state.go('albums');
+                }
+            },
             { name: '讨论专区', icon: 'comments-o' },
             { name: '数据统计', icon: 'area-chart' },
             { name: '关于本站', icon: 'sitemap' }
@@ -69,7 +76,7 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
                     });
                 $scope.closeMenu();
             }
-        },
+        }
 
     }
 

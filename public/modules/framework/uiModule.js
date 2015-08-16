@@ -54,3 +54,20 @@ ccUI.directive('busy', [function() {
         }
     }
 }]);
+
+ccUI.directive('albumPreview', [function() {
+    return {
+        restrict: 'C',
+        templateUrl: '/modules/tutorials/album-preview.html',
+        scope: {
+            getAlbum: '&album',
+            closePreview: '&close'
+        },
+        link: function(scope, element, attrs) {
+            scope.album = scope.getAlbum();
+            scope.viewAlbum = function() {
+                console.log(scope.album);
+            }
+        }
+    }
+}]);
