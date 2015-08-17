@@ -24,6 +24,21 @@ ccUI.filter('cnDate', function() {
     };
 });
 
+ccUI.filter('briefIntro', function() {
+    return function(input, length) {
+        var text = '暫時沒有介紹';
+        length = length || 65;
+        if(typeof input === 'string') {
+            if(input.length > length) {
+                text = input.substring(0, length - 1) + ' ...';
+            } else {
+                text = input;
+            }
+        }
+        return text;
+    }
+});
+
 ccUI.directive('busy', [function() {
     return {
         restrict: 'A',

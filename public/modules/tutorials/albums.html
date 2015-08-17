@@ -6,15 +6,15 @@
     <div class="row">
         <div class="col-sm-8 pull-left">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-sm active">全部</button>
-                <button type="button" class="btn btn-default btn-sm">网络</button>
-                <button type="button" class="btn btn-default btn-sm">数据库</button>
-                <button type="button" class="btn btn-default btn-sm">移动应用</button>
-                <button type="button" class="btn btn-default btn-sm">游戏开发</button>
-                <button type="button" class="btn btn-default btn-sm">地图技术</button>
-                <button type="button" class="btn btn-default btn-sm">编程语言</button>
-                <button type="button" class="btn btn-default btn-sm">数据可视化</button>
-                <button type="button" class="btn btn-default btn-sm">其它类别</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'All' }" ng-click="search('All')">全部</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Web' }" ng-click="search('Web')">网络</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Database' }" ng-click="search('Database')">数据库</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Mobile' }" ng-click="search('Mobile')">移动应用</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Game' }" ng-click="search('Game')">游戏开发</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Map' }" ng-click="search('Map')">地图技术</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Language' }" ng-click="search('Language')">编程语言</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Visualization' }" ng-click="search('Visualization')">数据可视化</button>
+                <button type="button" class="btn btn-default btn-sm" ng-class="{ active: searchOptions.type === 'Other' }" ng-click="search('Other')">其它类别</button>
             </div>
         </div>
         <div class="col-sm-4 pull-right">
@@ -25,10 +25,10 @@
         </div>
     </div>
     <div class="row album-list">
-        <div class="album-frame" ng-repeat="album in albums">
+        <div class="album-frame" ng-repeat="album in filteredAlbums">
             <div class="album" ng-click="togglePreview(album ,$index)">
                 <h4>{{ album.name }}</h4>
-                <p>{{ album.introduction }}</p>
+                <p>{{ album.introduction | briefIntro }}</p>
             </div>
         </div>
     </div>
