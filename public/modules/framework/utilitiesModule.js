@@ -5,6 +5,14 @@ var ccUtilities = angular.module('cc.utilities', ['ngCookies']);
 
 
 /**
+ *
+ */
+ccUtilities.factory('underscore', ['$window', function($window) {
+    return $window._;
+}]);
+
+
+/**
  * SafeApply Service
  */
 ccUtilities.factory('safeApply', ['$rootScope', function ($rootScope) {
