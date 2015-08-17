@@ -146,7 +146,7 @@ span.pointer {
     display: block;
     width: 180px;
     height: 212px;
-    background: darkgray;
+    background: #eee;
     cursor: pointer;
     padding: 10px;
     border-radius: 4px;
@@ -157,7 +157,7 @@ span.pointer {
 .album-preview {
     width: 100%;
     height: 0;
-    background: darkgray;
+    background: #eee;
     overflow: hidden;
     padding: 10px 20px 0 10px;
     border-radius: 4px;
