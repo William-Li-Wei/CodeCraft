@@ -3,7 +3,6 @@
  */
 var ccTutorials = angular.module('cc.tutorials', []);
 
-
 /**
  * Config
  */
@@ -51,6 +50,28 @@ ccTutorials.config(['$stateProvider', function($stateProvider) {
                 }]
             }
         })
+        .state('album', {
+            url: '/albums/:id',
+            templateUrl: '/modules/tutorials/album.html',
+            controller: 'AlbumDetailsController',
+            resolve: {
+                album: ['$stateParams', function($stateParams) {
+                    return {
+                        articles: [
+                            { title: '从零入手, 一点都不难', author: '王尼玛', createdAt: '2015-02-01' },
+                            { title: '臥槽 Javascript 好好用', author: '王尼玛', createdAt: '2015-02-14' },
+                            { title: 'NodeJS 爽爆了', author: '朝尼', createdAt: '2015-03-08' },
+                            { title: '实战练习一下吧', author: '王尼玛', createdAt: '2015-04-01' }
+                        ],
+                        author: { name: '王尼玛' },
+                        introduction: '清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的',
+                        name: 'Web开发指南',
+                        tags: [ 'Web', '网络', '建站' ],
+                        type: 'Web'
+                    }
+                }]
+            }
+        });
 }]);
 
 
@@ -66,16 +87,16 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
 
 
     // Interactions
-    _closePreview = function() {
+    function _closePreview() {
         angular.element('.album-preview').remove();
     };
-    _resetAlbumsTop = function() {
+    function _resetAlbumsTop() {
         angular.forEach(angular.element('.album'), function(item) {
             var currentItem = angular.element(item);
             currentItem.css('top', 0);
         });
     };
-    _setAlbumsTop = function(offsetTop, top) {
+    function _setAlbumsTop(offsetTop, top) {
         angular.forEach(angular.element('.album'), function(item) {
             var currentItem = angular.element(item);
             if(currentItem.prop('offsetTop') > offsetTop) {
@@ -83,7 +104,7 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             }
         });
     };
-    _getPreviewOffset = function(selectedOffset) {
+    function _getPreviewOffset(selectedOffset) {
         var offset = angular.copy(selectedOffset);
         // set left
         angular.forEach(angular.element('.album'), function(item) {
@@ -96,15 +117,15 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
         offset.top = offset.top + 250;
         return offset;
     };
-    _openPreview = function(offset, album, albumIndex) {
-        var previewElement = angular.element('<div class="album-preview" close="closePreview()" album="getAlbum(' + albumIndex +  ')"></div>');
+    function _openPreview(offset, album, albumIndex) {
+        var previewElement = angular.element('<div class="album-preview" close="closePreview()" view="viewAlbum(' + album.id + ')" album="getAlbum(' + albumIndex +  ')"></div>');
         var listDiv = angular.element('.album-list');
         $compile(previewElement)($scope);
         listDiv.append(previewElement);
         previewElement.offset( offset );
         previewElement.height(290);
     };
-    _resetAll = function(previousElement) {
+    function _resetAll(previousElement) {
         if(previousElement.length) {
             _closePreview();
             _resetAlbumsTop();
@@ -113,7 +134,7 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             pageElement.css('height','auto');
         }
     };
-    _showPreview = function(element, previousElement, sameElement, album, albumIndex) {
+    function _showPreview(element, previousElement, sameElement, album, albumIndex) {
         // 1. check if clicking on the same album again
         // 1.1 if yes, do nothing here, since preview is closed and all albums are reset
         // 1.2 if no, move down all albums bellow the selected element and open another preview
@@ -146,7 +167,7 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             pageElement.height(pageHeight + 310);
         }
     };
-    _updateAlbumsAndPreview = function(element, album, albumIndex) {
+    function _updateAlbumsAndPreview(element, album, albumIndex) {
         if(element.length) {
             var previousElement = angular.element('.album.selected');
             var sameElement = previousElement.length && element.hasClass('selected');
@@ -164,6 +185,9 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
     $scope.closePreview = function() {
         var previousElement = angular.element('.album.selected');
         _resetAll(previousElement);
+    };
+    $scope.viewAlbum = function(id) {
+        $state.go('album', { id: id });
     };
     $scope.search = function(type) {
         $scope.closePreview();
@@ -212,4 +236,8 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
     w.bind('resize', function () {
         $scope.$apply();
     });
+}]);
+
+ccTutorials.controller('AlbumDetailsController', ['$scope', 'album', function($scope, album) {
+    $scope.album = angular.copy(album);
 }]);

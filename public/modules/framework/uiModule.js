@@ -76,13 +76,11 @@ ccUI.directive('albumPreview', [function() {
         templateUrl: '/modules/tutorials/album-preview.html',
         scope: {
             getAlbum: '&album',
-            closePreview: '&close'
+            closePreview: '&close',
+            viewAlbum: '&view'
         },
         link: function(scope, element, attrs) {
             scope.album = scope.getAlbum();
-            scope.viewAlbum = function() {
-                console.log(scope.album);
-            }
         }
     }
 }]);

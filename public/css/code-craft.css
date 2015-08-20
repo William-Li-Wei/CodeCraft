@@ -37,6 +37,10 @@ span.pointer {
     cursor: pointer;
 }
 
+.borderless tbody tr td, .borderless tbody tr th, .borderless thead tr th {
+    border: none;
+}
+
 /**********  Home Page  **********/
 
 /* Home Page Header */
@@ -129,6 +133,23 @@ span.pointer {
 .profile-general i {
     color: darkgray;
 }
+.profile-photo-thumb {
+    float: left;
+    width: 52px;
+    height: 52px;
+    border-radius: 100%;
+}
+.profile-photo-thumb img {
+    width: 100%;
+}
+.profile-photo-medium {
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+}
+.profile-photo-medium img {
+    width: 100%;
+}
 
 
 /**********  Tutorials  **********/
@@ -168,6 +189,19 @@ span.pointer {
 
 .album-preview .preview-intro {
     height: 220px;
+}
+
+.album-photo {
+    width: 246px;
+    height: 246px;
+    overflow: hidden;
+}
+.album-photo img{
+    width: 100%;
+    height: 100%;
+}
+.tag {
+    margin: 5px;
 }
 
 
