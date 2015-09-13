@@ -15,6 +15,7 @@ module.exports = {
     },
     server: {
         ip: 'localhost',
+        domain: 'www.codecraft.cn',
         listenPort: 3000,                                   // The port on which the server is to listen (means that the app is at http://localhost:3000 for instance)
         securePort: 8434,                                   // The HTTPS port on which the server is to listen (means that the app is at https://localhost:8433 for instance)
         distFolder: path.resolve(__dirname, './public'),    // The folder that contains the application files

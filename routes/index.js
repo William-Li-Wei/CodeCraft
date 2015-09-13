@@ -3,4 +3,5 @@
  */
 module.exports = function(app, security) {
     require('./user')(app, security);
+    require('./tutorial')(app, security);
 };

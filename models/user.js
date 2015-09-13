@@ -13,7 +13,23 @@ var userSchema = new Schema({
     createdAt           : { type: Date, required: true },
     createdBy           : { type: String, required: true },
     updatedAt           : { type: Date, required: true },
-    updatedBy           : { type: String, required: true }
+    updatedBy           : { type: String, required: true },
+    photo               : { type: String },
+    recommending        : [],
+    recommendedBy       : [],
+    followers           : [],
+    following           : [],
+    activities          : [],
+    albums              : [],
+    articles            : [],
+    albumContributions  : [],
+    articleContributions: [],
+    subscriptions       : [],
+    albumCollections    : [],
+    articleCollections  : [],
+    albumShare          : [],
+    articleShare        : []
+
 }, { collection: "users" });
 
 exports.getUserModel = function() {
