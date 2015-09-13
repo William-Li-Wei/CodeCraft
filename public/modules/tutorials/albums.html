@@ -26,9 +26,16 @@
     </div>
     <div class="row album-list">
         <div class="album-frame" ng-repeat="album in filteredAlbums">
-            <div class="album" ng-click="togglePreview(album ,$index)">
-                <h4>{{ album.name }}</h4>
-                <p>{{ album.introduction | briefIntro }}</p>
+            <div class="album" ng-click="togglePreview(album ,$index)" ng-style="{'background-image': 'url(' + (album.cover === 'default' ? 'resources/img/album-covers/default.jpg' : album.cover) + ')'}">
+                <div class="over">
+                    <h4><b>{{ album.name }}</b></h4>
+                    <div>
+                        <i class="fa fa-file-o"></i> {{ album.articlesCount }} &nbsp;
+                        <i class="fa fa-bookmark-o"></i> {{ album.bookmarkedCount }} &nbsp;
+                        <i class="fa fa-thumbs-o-up"></i> {{ album.likedCount }} &nbsp;
+                        <i class="fa fa-send-o"></i> {{ album.sharedCount }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

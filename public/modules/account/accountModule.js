@@ -35,8 +35,29 @@ ccAccount.config(['$stateProvider', function($stateProvider) {
 /**
  * Controllers
  */
-ccAccount.controller('ProfileController', ['$rootScope' ,'$scope', 'user' , function($rootScope, $scope, user) {
+ccAccount.controller('ProfileController', ['$rootScope' ,'$scope', '$state', 'user' , function($rootScope, $scope, $state, user) {
     $scope.user = user;
+    $scope.tab = 'activities';
+
+    // Interactions
+    $scope.switchTab = function(tab) {
+        $scope.tab = tab;
+    };
+    $scope.viewActivityDetails = function(activity) {
+        switch(activity.type) {
+            case 'Album':
+                $state.go('album', { id: activity.linkedId });
+                break;
+            case 'Article':
+                $state.go('article', { id: activity.linkedId });
+                break;
+        }
+    };
+    $scope.viewAlbumDetails = function(album) {
+        $state.go('album', { id: album._id });
+    };
+
+    // Utils
     $scope.isVisitor =  $rootScope.user && $rootScope.user._id === $scope.user._id;
 }]);
 

@@ -41,6 +41,10 @@ span.pointer {
     border: none;
 }
 
+textarea {
+    resize: none;
+}
+
 /**********  Home Page  **********/
 
 /* Home Page Header */
@@ -113,7 +117,7 @@ span.pointer {
     width: 52px;
     border-radius: 100%;
     cursor: pointer;
-    box-shadow:0 0 14px #7f8c8d,0 0 20px #7f8c8d, inset 0 8px 8px 16px black, inset 10px 0 12px 16px black;
+    box-shadow:0 0 14px #7f8c8d,0 0 20px #7f8c8d, inset 0 8px 8px 16px gray, inset 10px 0 12px 16px gray;
 }
 .profile-photo-suspended img {
     width: 100%;
@@ -171,17 +175,39 @@ span.pointer {
     cursor: pointer;
     padding: 10px;
     border-radius: 4px;
+    background-size: cover;
+
+    /*text-align: right;*/
+    /*text-shadow: 0 1px 1px #000,0 0 5px #000,0 0 5px #000,0 0 5px #000;*/
+    /*color: #fff;*/
 
     -webkit-transition: top 0.2s;
     transition: top 0.2s;
 }
+.album .over {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 10%;
+    width: 100%;
+    text-align: right;
+    text-shadow: 0 1px 1px #000,0 0 5px #000,0 0 5px #000,0 0 5px #000;
+    color: #fff;
+    border-radius: 0 0 4px 4px;
+}
+
+.album:hover .over {
+    background: rgba(48,48,48,0.7);
+}
+
 .album-preview {
     width: 100%;
     height: 0;
     background: #eee;
     overflow: hidden;
-    padding: 10px 20px 0 10px;
+    padding: 10px 20px 10px 10px;
     border-radius: 4px;
+    overflow-y: scroll;
 
     -webkit-transition: height 0.2s;
     transition: height 0.2s;
@@ -199,9 +225,19 @@ span.pointer {
 .album-photo img{
     width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 .tag {
     margin: 5px;
+}
+
+
+.pagedown-preview.wmd-panel.wmd-preview.dashed {
+    border-style: dashed;
+    border-radius: 6px;
+    border-color: #95a5a6;
+    border-width: 2px;
+    min-height: 150px;
 }
 
 

@@ -20,7 +20,7 @@ ccFramework.config(['$stateProvider', function($stateProvider) {
 /**
  * Controllers
  */
-ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 'toastr', 'security', 'frameworkModalFactory', function($rootScope, $scope, $state, toastr, security, frameworkModalFactory) {
+ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 'toastr', 'security', 'frameworkModalFactory', 'tutorialsModalFactory', function($rootScope, $scope, $state, toastr, security, frameworkModalFactory, tutorialsModalFactory) {
     // Initialization
     $scope.menuOpened = false;
     var _defaultMenu = {
@@ -76,9 +76,24 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
                     });
                 $scope.closeMenu();
             }
-        }
+        },
+        addAlbum: {
+            name: '创建专辑',
+            icon: 'plus-square',
+            click: function() {
+                tutorialsModalFactory.showAddAlbumModal();
+                $scope.closeMenu();
+            }
+        },
+        addArticle: {
+            name: '撰写文章',
+            icon: 'pencil-square',
+            click: function() {
 
-    }
+                $scope.closeMenu();
+            }
+        }
+    };
 
     $scope.menu = angular.copy(_defaultMenu);
 
@@ -95,7 +110,7 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
     // System Events
     $scope.$on('cc::security::login', function() {
         $rootScope.user = security.currentUser();
-        _setButtons();
+        _setButtons([ 'addArticle', 'addAlbum' ]);
     });
     $scope.$on('cc::security::logout', function() {
         $rootScope.user = security.currentUser();
@@ -113,16 +128,16 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
 
     function _setButtons(buttons) {
         var buttonList = [];
-        if($rootScope.user && $rootScope.user._id) {
-            buttonList.push(_availableButtons.signOut);
-        } else {
-            buttonList.push(_availableButtons.signIn)
-        }
         angular.forEach(buttons, function(buttonName) {
             if(_availableButtons[buttonName]) {
                 buttonList.push(_availableButtons[buttonName]);
             }
         });
+        if($rootScope.user && $rootScope.user._id) {
+            buttonList.push(_availableButtons.signOut);
+        } else {
+            buttonList.push(_availableButtons.signIn)
+        }
         $scope.menu.buttons = angular.copy(buttonList);
     }
 
@@ -135,9 +150,16 @@ ccFramework.controller('MainMenuController', ['$rootScope', '$scope', '$state', 
     };
 }]);
 
-ccFramework.controller('HomePageController', ['$scope', function($scope) {
+ccFramework.controller('HomePageController', ['$state', '$scope', 'frameworkModalFactory', function($state, $scope, frameworkModalFactory) {
     $scope.languageConfig = languageConfig;
     $scope.language = 'chinese';
+
+    $scope.toAlbums = function() {
+        $state.go('albums');
+    };
+    $scope.join = function() {
+        frameworkModalFactory.showSignInModal();
+    };
 }]);
 
 
@@ -151,6 +173,13 @@ ccFramework.factory('frameworkModalFactory', ['$modal', function($modal) {
             var modal = $modal.open({
                 templateUrl: '/modules/framework/sign-in-modal.html',
                 controller: 'SignInModalController'
+            });
+            return modal.result;
+        },
+        showPagedownHelpModal: function() {
+            var modal = $modal.open({
+                templateUrl: '/modules/framework/pagedownHelpModal.html',
+                controller: 'PagedownHelpModalController'
             });
             return modal.result;
         }
@@ -223,4 +252,11 @@ ccFramework.controller('SignInModalController', ['$scope', '$modalInstance', 'to
                     $scope.message = security.lastMessage();
                 });
         }
+    }]);
+
+ccFramework.controller('PagedownHelpModalController', ['$scope', '$modalInstance',
+    function($scope, $modalInstance) {
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);

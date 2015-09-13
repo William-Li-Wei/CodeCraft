@@ -6,8 +6,7 @@ var Pending = require('../../models/pending').getPendingModel();
 var Reset = require('../../models/reset').getResetModel();
 var config = require('../../config');
 var encryptor = require('../../lib/encryptor');
-var mailer = require('../../lib/mailer');
-var Q = require('q');
+var utils = require('../utils');
 
 
 var PURPOSE_PROFILE = 'profile';
@@ -24,7 +23,16 @@ exports.getUserById = function(req, res, context) {
     console.log(context);
     var id = req.params.id;
     var purpose = req.query.purpose;
-    var resultUser;
+    var trimOptions = utils.clone(utils.userTrimOptions);
+    if(purpose === PURPOSE_PROFILE) {
+        trimOptions.follows = false;
+        trimOptions.recommneds = false;
+        trimOptions.activities = false;
+        trimOptions.albums = false;
+        trimOptions.articles = false;
+        trimOptions.contributions = false;
+        trimOptions.subscriptions = false;
+    }
 
     // 1. validate the request
     if(!id) {
@@ -36,8 +44,10 @@ exports.getUserById = function(req, res, context) {
         User.findById(id).exec()
             .then(function(user) {
                 if(user) {
-                    resultUser = filterUser(user.toObject(), purpose);
-                    return res.status(200).json(resultUser);
+                    utils.filterUser(user.toObject(), trimOptions)
+                        .then(function(resultUser) {
+                            return res.status(200).json(resultUser);
+                        });
                 } else {
                     return res.status(404).json({ message: 'User not found.' });
                 }
@@ -46,6 +56,7 @@ exports.getUserById = function(req, res, context) {
             });
     }
 };
+
 
 /**
  * Register a new user(create a pending) and send out the activation email
@@ -59,19 +70,16 @@ exports.register = function(req, res, context) {
     var url;
     var mailContent;
 
-
     // validate the request
     if(userData && userData.email && typeof userData.email === 'string' && userData.password && userData.username) {
+
         userData.email = userData.email.toLowerCase();
+
         // check availability of email
         User.count({ email: userData.email }).exec()
             .then(function(count) {
-                // email in use, return a message to client.
-                if(typeof count === 'number' && count > 0) {
-                    throw new Error('Email in use.');
-                }
                 // email available, prepare invitation and create pending
-                else if(typeof count === 'number' && count == 0){
+                if(count === 0) {
                     // create hashed password
                     var hashedPassword = encryptor.createHash(userData.password);
                     var hashedEmail = encryptor.createHash(userData.email);
@@ -79,7 +87,7 @@ exports.register = function(req, res, context) {
                     userData.hashCode = new Buffer(hashedEmail).toString('base64');
 
                     // prepare email
-                    url = "http://" + config.server.ip + ":3000/account/activate/" + userData.hashCode;
+                    url = "http://" + config.server.ip + "/account/activate/" + userData.hashCode;
                     mailContent = "亲爱的用户 " + userData.username + " :\n\n" +
                         "欢迎加入源艺,开始您与众多IT爱好者分享源码,交流经验和探索发现的旅程。\n" +
                         "请点击下面的链接来激活您的账户:\n" + url + "\n" +
@@ -98,15 +106,20 @@ exports.register = function(req, res, context) {
                     return Pending.update(
                         { email: userData.email },
                         { username: userData.username, password: hashedPassword, hashCode:  userData.hashCode, createdAt: new Date() }
+
                     ).exec();
+                }
+                // email in use, return a message to client.
+                else {
+                    throw new Error('Email in use.');
                 }
             })
             .then(function(result) {
                 // pending updated, resend invitation
                 if(result && result.nModified > 0) {
-                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
+                    return utils.sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
                 }
-                // creat pending
+                // no pending found, creat one
                 else if(result && result.nModified == 0) {
                     userData.created = new Date();
                     return Pending.create(userData);
@@ -119,25 +132,25 @@ exports.register = function(req, res, context) {
                 }
                 // pending created, send invitation here.
                 else if(result && result !== 'Email sent.') {
-                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
+                    return utils.sendEmail(userData.email, "来自源艺 codecraft.cn 的激活邀请", mailContent);
                 }
             })
             .then(function(result) {
                 // invitation sent.
                 if(result === 'Email sent.') {
-                    return res.status(200).json({ message: result });
+                    throw new Error(result);
                 }
             })
             .onReject(function(err){
                 switch(err.message) {
-                    case 'Pending not found.':
-                        return res.status(404).json({ message: 'Pending not found.' });
-                        break;
                     case 'Email not sent.':
                         return res.status(500).json({ message: 'Email not sent.' });
                         break;
                     case 'Email sent.':
                         return res.status(200).json({ message: 'Email sent.' });
+                        break;
+                    case 'Email not sent.':
+                        return res.status(200).json({ message: 'Email in use.' });
                         break;
                     default:
                         return res.status(500).json(err);
@@ -152,6 +165,7 @@ exports.register = function(req, res, context) {
     }
 };
 
+
 /**
  * Activate an user account by creating the user in DB and removing the pending.
  * @param req
@@ -162,6 +176,8 @@ exports.activate = function(req, res, context) {
     console.log(context);
     var hashCode = req.body.hashCode;
     var user = undefined;
+    var trimOptions = utils.clone(utils.userTrimOptions);
+
     if(hashCode) {
         Pending.findOne({ hashCode: hashCode }).exec()
             .then(function(pending) {
@@ -176,8 +192,18 @@ exports.activate = function(req, res, context) {
                         createdAt: new Date(),
                         createdBy: 'system',
                         updatedAt: new Date(),
-                        updatedBy: 'system'
+                        updatedBy: 'system',
+                        photo: 'default',
+                        activities: []
                     };
+                    var activity = {
+                        title: '加入源艺',
+                        text: undefined,
+                        linkedId: undefined,
+                        type: 'Message',
+                        date: new Date()
+                    };
+                    newUser.activities.push(activity);
                     return User.create(newUser);
                 } else {
                     // Pending not found, could be expired
@@ -187,13 +213,16 @@ exports.activate = function(req, res, context) {
             .then(function(newUser) {
                 if(newUser) {
                     // delete pending
-                    user = filterUser(newUser.toObject(), PURPOSE_LOGIN);
+                    user = {
+                        email: newUser.email,
+                        username: newUser.username
+                    };
                     return Pending.remove({ hashCode: hashCode });
                 }
             })
             .then(function(result) {
                 if(result) {
-                    url = "http://" + config.server.ip + ":3000/";
+                    url = "http://" + config.server.ip;
                     var text = "亲爱的用户 " + user.username + " :\n\n" +
                         "您的账户以经激活,可以通过以下链接访问源艺主页:\n" + url + "\n\n" +
                         "祝您在源艺网体验愉快\n" +
@@ -202,8 +231,8 @@ exports.activate = function(req, res, context) {
                         "Your account at CodeCraft has been activated, and you can follow the link bellow to visit CodeCraft:" + url + "\n\n" +
                         "Kind regards\n" +
                         "The CodeCraft Team";
-                    sendEmail(user.email, "您的源艺 codecraft.cn 账户已激活", text);
-                    return res.status(200).json(user);
+                    utils.sendEmail(user.email, "您的源艺 codecraft.cn 账户已激活", text);
+                    return res.status(200).json({ message: 'Account activated.' });
                 }
             })
             .onReject(function(err){
@@ -253,7 +282,7 @@ exports.findPassword = function(req, res, context) {
                     userData.username = user.toObject().username;
 
                     // prepare email
-                    url = "http://" + config.server.ip + ":3000/account/reset-password/" + userData.hashCode;
+                    url = "http://" + config.server.ip + "/account/reset-password/" + userData.hashCode;
                     mailContent = "亲爱的用户 " + userData.username + " :\n\n" +
                         "您刚刚申请了重置密码服务,请点击下面的链接来进行重置:\n" + url + "\n" +
                         "如果您无法通过链接进行跳转,请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
@@ -266,14 +295,14 @@ exports.findPassword = function(req, res, context) {
                         "If you didn't make the request, your email address might has been used by others as wrong input, please ignore this email.\n\n" +
                         "Kind regards\n" +
                         "The CodeCraft Team";
-                    // try to update an existing pending
+                    // try to update an existing Reset
                     return Reset.count({ email: userData.email }).exec();
                 }
             })
             .then(function(count) {
                 // reset found, resend link
                 if(typeof count === 'number' && count > 0) {
-                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的密码重置链接", mailContent);
+                    return utils.sendEmail(userData.email, "来自源艺 codecraft.cn 的密码重置链接", mailContent);
                 }
                 // reset not found, create reset and then send email
                 else if(typeof count === 'number' && count == 0) {
@@ -288,7 +317,7 @@ exports.findPassword = function(req, res, context) {
                 }
                 // reset created, send link here.
                 else if(result && result !== 'Email sent.') {
-                    return sendEmail(userData.email, "来自源艺 codecraft.cn 的密码重置链接", mailContent);
+                    return utils.sendEmail(userData.email, "来自源艺 codecraft.cn 的密码重置链接", mailContent);
                 }
             })
             .then(function(result) {
@@ -350,7 +379,6 @@ exports.resetPassword = function(req, res, context) {
                 if(resUser) {
                     user = resUser.toObject();
                     var hashedPassword = encryptor.createHash(userData.password);
-                    console.log('>>>>>>>>>>> ', userData.password);
                     return User.update(
                         { email: user.email },
                         { password: hashedPassword, updatedAt: new Date(), updatedBy: 'system' }
@@ -364,7 +392,7 @@ exports.resetPassword = function(req, res, context) {
             .then(function(result) {
                 // password updated, send email
                 if(result && result.nModified > 0) {
-                    url = "http://" + config.server.ip + ":3000/";
+                    url = "http://" + config.server.ip;
                     var text = "亲爱的用户 " + user.username + " :\n\n" +
                         "您的密码以经重置,可以通过以下链接访问源艺主页:\n" + url + "\n\n" +
                         "祝您在源艺网体验愉快\n" +
@@ -373,7 +401,7 @@ exports.resetPassword = function(req, res, context) {
                         "Your password has been reset, and you can follow the link bellow to visit CodeCraft:\n" + url + "\n\n" +
                         "Kind regards\n" +
                         "The CodeCraft Team";
-                    return sendEmail(user.email, "您的源艺 codecraft.cn 密码已重置", text);
+                    return utils.sendEmail(user.email, "您的源艺 codecraft.cn 密码已重置", text);
                 }
                 // password not updated, again this should never happen.
                 else if(result && result.nModified == 0) {
@@ -408,50 +436,4 @@ exports.resetPassword = function(req, res, context) {
     } else {
         return res.status(400).json({ message: 'Bad request.' });
     }
-}
-
-/**
- * Supportive functions
- */
-function filterUser(user, purpose) {
-    var filteredUser = {
-        _id: user._id,
-        email: user.email,
-        username: user.username,
-        role: user.role,
-        status: user.status
-    };
-    switch(purpose) {
-        case PURPOSE_PROFILE:
-            filteredUser.createdAt = user.createdAt;
-            filteredUser.createdBy = user.createdBy;
-            filteredUser.updatedAt = user.updatedAt;
-            filteredUser.updatedBy = user.updatedBy;
-            break;
-    }
-    return filteredUser;
-}
-function sendEmail(address, subject, mailContent) {
-    var smtpTransport = mailer.smtpTransport;
-
-    // setup e-mail data with unicode symbols
-    var mailOptions = {
-        from: "源艺 codecraft.cn <codecraft.cn@gmail.com>",      // sender address
-        to: address,                                            // list of receivers
-        subject: subject,                                       // Subject line
-        text: mailContent                                              // plaintext body
-    };
-
-    // send mail with defined transport object
-    return Q.Promise(function(resolve, reject, notify) {
-        smtpTransport.sendMail(mailOptions, function(err, response){
-            // if you don't want to use this transport object anymore, uncomment following line
-            smtpTransport.close(); // shut down the connection pool, no more messages
-            if(err){
-                reject(new Error('Email not sent.'));
-            } else {
-                resolve('Email sent.');
-            }
-        });
-    });
-}
+};

@@ -13,40 +13,8 @@ ccTutorials.config(['$stateProvider', function($stateProvider) {
             templateUrl: '/modules/tutorials/albums.html',
             controller: 'AlbumsController',
             resolve: {
-                albums: ['$stateParams', function($stateParams) {
-                    return [
-                        {
-                            author: { name: '王尼玛' },
-                            introduction: '清华大学教授孙行者的最新著作, 全面而详细的介绍了如何从零开始, 使用现有的web框架, 开发新的web项目, 老少皆宜, 实乃居家旅行必备良书.',
-                            name: 'Web开发指南',
-                            type: 'Web'
-                        },
-                        {
-                            introduction: '逗知识, 冷吐槽, 这个家伙很无聊; 装装逼, 扯扯蛋, 标题内容反着看.',
-                            name: 'We Do Code Right',
-                            type: 'Other'
-                        },
-                        {
-                            introduction: '数据库技术是非常重要的, 很多应用都离不开他, 跟我学, 121, 我们都爱肯德基!',
-                            name: 'Database 2015',
-                            type: 'Database'
-                        },
-                        {
-                            introduction: 'Java 是一门编程艺术, 讲究的是说学逗唱. 但在众多编程语言当中, Java算是较难的一只, 有很多复杂的语法和规则, 但同时提供了很多便利和安全性服务, 大家可以放心的使用它.',
-                            name: 'Java Advance',
-                            type: 'Language'
-                        },
-                        {
-                            introduction: 'Python 很火唉最近, 想不想试试?',
-                            name: 'Learn Python from 0',
-                            type: 'Language'
-                        },
-                        {
-                            introduction: '中南大学的计算机科学专业很不错哦, 大家可以试试, 但信息安全专业更棒!',
-                            name: 'Computer Science',
-                            type: 'Other'
-                        }
-                    ];
+                albums: ['$stateParams', 'tutorialApi', function($stateParams, tutorialApi) {
+                    return tutorialApi.getAlbums('list_with_details');
                 }]
             }
         })
@@ -55,20 +23,23 @@ ccTutorials.config(['$stateProvider', function($stateProvider) {
             templateUrl: '/modules/tutorials/album.html',
             controller: 'AlbumDetailsController',
             resolve: {
-                album: ['$stateParams', function($stateParams) {
-                    return {
-                        articles: [
-                            { title: '从零入手, 一点都不难', author: '王尼玛', createdAt: '2015-02-01' },
-                            { title: '臥槽 Javascript 好好用', author: '王尼玛', createdAt: '2015-02-14' },
-                            { title: 'NodeJS 爽爆了', author: '朝尼', createdAt: '2015-03-08' },
-                            { title: '实战练习一下吧', author: '王尼玛', createdAt: '2015-04-01' }
-                        ],
-                        author: { name: '王尼玛' },
-                        introduction: '清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的清华大学教授孙行者的',
-                        name: 'Web开发指南',
-                        tags: [ 'Web', '网络', '建站' ],
-                        type: 'Web'
-                    }
+                album: ['$stateParams', 'tutorialApi', function($stateParams, tutorialApi) {
+                    return tutorialApi.getAlbumById($stateParams.id, 'details');
+                }]
+            }
+        })
+        .state('new-article', {
+            url: '/albums/:albumId/newArticle',
+            templateUrl: '/modules/tutorials/add-article.html',
+            controller: 'AddArticleController'
+        })
+        .state('article', {
+            url: '/article/:id',
+            templateUrl: 'modules/tutorials/article.html',
+            controller: 'ArticleDetailsController',
+            resolve: {
+                article: ['$stateParams', 'tutorialApi', function($stateParams, tutorialApi) {
+                    return tutorialApi.getArticleById($stateParams.id, 'details');
                 }]
             }
         });
@@ -79,6 +50,7 @@ ccTutorials.config(['$stateProvider', function($stateProvider) {
  * Controllers
  */
 ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', '$compile', '$window', '$document', '$timeout', 'underscore', 'albums', function($scope, $state, $stateParams, $compile, $window, $document, $timeout, underscore, albums) {
+    $scope.state = $state;
     $scope.albums = angular.copy(albums);
     $scope.filteredAlbums = angular.copy(albums);
     $scope.searchOptions = {
@@ -89,13 +61,13 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
     // Interactions
     function _closePreview() {
         angular.element('.album-preview').remove();
-    };
+    }
     function _resetAlbumsTop() {
         angular.forEach(angular.element('.album'), function(item) {
             var currentItem = angular.element(item);
             currentItem.css('top', 0);
         });
-    };
+    }
     function _setAlbumsTop(offsetTop, top) {
         angular.forEach(angular.element('.album'), function(item) {
             var currentItem = angular.element(item);
@@ -103,7 +75,7 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
                 currentItem.css('top', top);
             }
         });
-    };
+    }
     function _getPreviewOffset(selectedOffset) {
         var offset = angular.copy(selectedOffset);
         // set left
@@ -116,15 +88,15 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
         // set top
         offset.top = offset.top + 250;
         return offset;
-    };
-    function _openPreview(offset, album, albumIndex) {
-        var previewElement = angular.element('<div class="album-preview" close="closePreview()" view="viewAlbum(' + album.id + ')" album="getAlbum(' + albumIndex +  ')"></div>');
+    }
+    function _openPreview(offset) {
+        var previewElement = angular.element('<div class="album-preview" album="selectedAlbum" close="closePreview()" state="state"></div>');
         var listDiv = angular.element('.album-list');
         $compile(previewElement)($scope);
         listDiv.append(previewElement);
         previewElement.offset( offset );
         previewElement.height(290);
-    };
+    }
     function _resetAll(previousElement) {
         if(previousElement.length) {
             _closePreview();
@@ -133,8 +105,8 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             var pageElement = angular.element('.page-container');
             pageElement.css('height','auto');
         }
-    };
-    function _showPreview(element, previousElement, sameElement, album, albumIndex) {
+    }
+    function _showPreview(element, previousElement, sameElement) {
         // 1. check if clicking on the same album again
         // 1.1 if yes, do nothing here, since preview is closed and all albums are reset
         // 1.2 if no, move down all albums bellow the selected element and open another preview
@@ -147,7 +119,7 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             if(element.prop('offsetTop') > previousElement.prop('offsetTop')) {
                 previewOffset.top -= 310;
             }
-            _openPreview(previewOffset, album, albumIndex);
+            _openPreview(previewOffset);
         }
 
         // 2. update element class 'selected'
@@ -166,8 +138,8 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
         } else if(!sameElement) {
             pageElement.height(pageHeight + 310);
         }
-    };
-    function _updateAlbumsAndPreview(element, album, albumIndex) {
+    }
+    function _updateAlbumsAndPreview(element) {
         if(element.length) {
             var previousElement = angular.element('.album.selected');
             var sameElement = previousElement.length && element.hasClass('selected');
@@ -175,19 +147,18 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             // 1. check if any preview is open, close it if yes
             _resetAll(previousElement);
             // 2. mode albums and show preview
-            _showPreview(element, previousElement, sameElement, album, albumIndex);
+            _showPreview(element, previousElement, sameElement);
         }
-    };
+    }
     $scope.togglePreview = function(album, index) {
-        var element = angular.element('.album').eq(index);
-        _updateAlbumsAndPreview(element, album, index);
+        $scope.selectedAlbum = album;
+        $scope.selectedIndex = index;
+        var element = angular.element('.album').eq($scope.selectedIndex);
+        _updateAlbumsAndPreview(element);
     };
     $scope.closePreview = function() {
         var previousElement = angular.element('.album.selected');
         _resetAll(previousElement);
-    };
-    $scope.viewAlbum = function(id) {
-        $state.go('album', { id: id });
     };
     $scope.search = function(type) {
         $scope.closePreview();
@@ -211,9 +182,6 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
             }
         }
     };
-    $scope.getAlbum = function(index) {
-        return angular.copy($scope.albums[index]);
-    };
 
 
     // Events
@@ -232,12 +200,151 @@ ccTutorials.controller('AlbumsController', ['$scope', '$state', '$stateParams', 
 
         }
     }, true);
-
     w.bind('resize', function () {
         $scope.$apply();
     });
 }]);
 
-ccTutorials.controller('AlbumDetailsController', ['$scope', 'album', function($scope, album) {
+ccTutorials.controller('AlbumDetailsController', ['$scope', '$state', 'toastr', 'tutorialApi', 'album', function($scope, $state, toastr, tutorialApi, album) {
     $scope.album = angular.copy(album);
+    $scope.mode = 'view';
+
+    // Interactions
+    $scope.edit = function() {
+        $scope.mode = 'edit';
+        $scope.updatedAlbum = {
+            _id: $scope.album._id,
+            name: $scope.album.name,
+            introduction: $scope.album.introduction,
+            tags: angular.copy($scope.album.tags) || []
+        };
+    };
+    $scope.cancel = function() {
+        $scope.mode = 'view';
+        $scope.updatedAlbum = undefined;
+    };
+    $scope.save = function() {
+        return tutorialApi.updateAlbum($scope.updatedAlbum)
+            .then(function() {
+                $scope.album.name = $scope.updatedAlbum.name;
+                $scope.album.introduction = $scope.updatedAlbum.introduction;
+                $scope.album.tags = angular.copy($scope.updatedAlbum.tags);
+
+                toastr.success('您的专辑已更新', '专辑更新成功');
+                $scope.mode = 'view';
+                $scope.updatedAlbum = undefined;
+            }, function(err) {
+                toastr.error('创建更新时遇到问题: ' + err.message, '专辑更新失败');
+            });
+    };
+    $scope.addArticle = function() {
+        $state.go('new-article', { albumId: $scope.album._id });
+    };
+    $scope.viewArticle = function(articleId) {
+        $state.go('article', { id: articleId });
+    };
+    $scope.saveComments = function(comments) {
+        $scope.album.comments = comments;
+        return tutorialApi.updateAlbum($scope.album);
+    }
 }]);
+
+ccTutorials.controller('AddArticleController', ['$scope', '$state', '$stateParams', 'toastr', 'tutorialApi', function($scope, $state, $stateParams, toastr, tutorialApi) {
+    $scope.articleData = {
+        albumId: $stateParams.albumId,
+        tags: []
+    };
+
+    // Interactions
+    $scope.cancel = function() {
+        $state.go('album', { id: $stateParams.albumId });
+    };
+    $scope.save = function() {
+        return tutorialApi.createArticle($scope.articleData)
+            .then(function(newArticle) {
+                toastr.success('您的文章已发布.', '文章发布成功');
+                $state.go('article', { id: newArticle._id });
+            }, function(err) {
+                toastr.error('发布文章时遇到问题', '文章发布失败');
+            });
+    };
+}]);
+
+ccTutorials.controller('ArticleDetailsController', ['$scope', '$state', '$stateParams', 'toastr', 'tutorialApi', 'article', function($scope, $state, $stateParams, toastr, tutorialApi, article) {
+    $scope.article = angular.copy(article);
+    $scope.mode = 'view';
+
+    // Interactions
+    $scope.toggleEdit = function() {
+        if($scope.mode === 'view') {
+            $scope.articleData = angular.copy($scope.article);
+            $scope.mode = 'edit';
+        } else {
+            $scope.mode = 'view';
+            $scope.articleData = undefined;
+        }
+    };
+    $scope.save = function() {
+        return tutorialApi.updateArticle($scope.articleData)
+            .then(function() {
+                $scope.article = angular.copy($scope.articleData);
+
+                toastr.success('您的文章已更新', '文章更新成功');
+                $scope.mode = 'view';
+                $scope.articleData = undefined;
+            }, function(err) {
+                toastr.error('文章更新时遇到问题: ' + err.message, '文章更新失败');
+            });
+    };
+    $scope.viewAlbum = function(albumId) {
+        $state.go('album', { id: albumId });
+    };
+    $scope.saveComments = function(comments) {
+        $scope.article.comments = comments;
+        return tutorialApi.updateArticle($scope.article);
+    }
+}]);
+
+
+/**
+ * Modal Factory Services
+ */
+ccTutorials.factory('tutorialsModalFactory', ['$modal', function($modal) {
+    return {
+        showAddAlbumModal: function() {
+            var modal = $modal.open({
+                templateUrl: '/modules/tutorials/add-album-modal.html',
+                controller: 'AddAlbumModalController'
+            });
+            return modal.result;
+        }
+    }
+}]);
+
+
+/**
+ * Modal Controllers
+ */
+ccTutorials.controller('AddAlbumModalController', ['$scope', '$state', '$modalInstance', 'toastr', 'security', 'tutorialApi',
+    function($scope, $state, $modalInstance, toastr, security, tutorialApi) {
+        // Initialization
+        $scope.albumData = {};
+
+        // Interactions
+        $scope.close = function() {
+            $scope.cancel();
+        };
+        $scope.cancel = function() {
+            $modalInstance.dismiss('cancel');
+        };
+        $scope.save = function() {
+            return tutorialApi.createAlbum($scope.albumData)
+                .then(function(newAlbum) {
+                    toastr.success('您的专辑已创建, 去添加几篇文章吧!', '专辑创建成功');
+                    $scope.close();
+                    $state.go('album', { id: newAlbum._id });
+                }, function(err) {
+                    toastr.error('创建专辑时遇到问题: ' + err, '专辑创建失败');
+                });
+        };
+    }]);
