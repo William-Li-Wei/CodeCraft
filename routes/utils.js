@@ -41,7 +41,7 @@ var utils = {
 
         // setup e-mail data with unicode symbols
         var mailOptions = {
-            from: "源艺 codecraft.cn <codecraft.cn@gmail.com>",      // sender address
+            from: "源艺 codecraft.cn <codecraft_cn@126.com>",      // sender address
             to: address,                                            // list of receivers
             subject: subject,                                       // Subject line
             text: mailContent                                              // plaintext body

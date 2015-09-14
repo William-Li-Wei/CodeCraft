@@ -126,7 +126,7 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								} else {
 									_lastMessage = {
 										type: 'danger',
-										text: '身份验证遇到问题, 请稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '身份验证遇到问题, 请稍后重试或者联系 codecraft_cn@126.com 我们会努力解决您的问题.'
 									}
 								}
 								_removeUser();
@@ -173,7 +173,7 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								} else {
 									_lastMessage = {
 										type: 'danger',
-										text: '用户注册遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '用户注册遇到问题, 请您稍后重试或者联系 codecraft_cn@126.com 我们会努力解决您的问题.'
 									}
 								}
 								promise.reject(err);
@@ -205,7 +205,7 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								else {
 									_lastMessage = {
 										type: 'danger',
-										text: '账户激活遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '账户激活遇到问题, 请您稍后重试或者联系 codecraft_cn@126.com 我们会努力解决您的问题.'
 									}
 								}
 								promise.reject(err);
@@ -232,7 +232,7 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								} else {
 									_lastMessage = {
 										type: 'danger',
-										text: '找回密码遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '找回密码遇到问题, 请您稍后重试或者联系 codecraft_cn@126.com 我们会努力解决您的问题.'
 									}
 								}
 								promise.reject(err);
@@ -254,12 +254,12 @@ ccSecurity.provider('security', ['$httpProvider', function() {
 								if(err.status === 404) {
 									_lastMessage = {
 										type: 'warning',
-										text: '您的重置链接已过期, 请在登录页面输入电子邮箱并重新获取密码重置链接, 如有进一步的问题, 请联系 codecraft.cn@gmail.com ,我们会努力解决您的问题.'
+										text: '您的重置链接已过期, 请在登录页面输入电子邮箱并重新获取密码重置链接, 如有进一步的问题, 请联系 codecraft_cn@126.com ,我们会努力解决您的问题.'
 									}
 								} else {
 									_lastMessage = {
 										type: 'danger',
-										text: '重置密码遇到问题, 请您稍后重试或者联系 codecraft.cn@gmail.com 我们会努力解决您的问题.'
+										text: '重置密码遇到问题, 请您稍后重试或者联系 codecraft_cn@126.com 我们会努力解决您的问题.'
 									}
 								}
 								promise.reject(err);

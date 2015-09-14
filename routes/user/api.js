@@ -87,7 +87,7 @@ exports.register = function(req, res, context) {
                     userData.hashCode = new Buffer(hashedEmail).toString('base64');
 
                     // prepare email
-                    url = "http://" + config.server.ip + "/account/activate/" + userData.hashCode;
+                    url = "http://" + config.server.ip + ':3000' + "/account/activate/" + userData.hashCode;
                     mailContent = "亲爱的用户 " + userData.username + " :\n\n" +
                         "欢迎加入源艺,开始您与众多IT爱好者分享源码,交流经验和探索发现的旅程。\n" +
                         "请点击下面的链接来激活您的账户:\n" + url + "\n" +
@@ -222,7 +222,7 @@ exports.activate = function(req, res, context) {
             })
             .then(function(result) {
                 if(result) {
-                    url = "http://" + config.server.ip;
+                    url = "http://" + config.server.ip + ':3000';
                     var text = "亲爱的用户 " + user.username + " :\n\n" +
                         "您的账户以经激活,可以通过以下链接访问源艺主页:\n" + url + "\n\n" +
                         "祝您在源艺网体验愉快\n" +
@@ -282,7 +282,7 @@ exports.findPassword = function(req, res, context) {
                     userData.username = user.toObject().username;
 
                     // prepare email
-                    url = "http://" + config.server.ip + "/account/reset-password/" + userData.hashCode;
+                    url = "http://" + config.server.ip + ':3000' + "/account/reset-password/" + userData.hashCode;
                     mailContent = "亲爱的用户 " + userData.username + " :\n\n" +
                         "您刚刚申请了重置密码服务,请点击下面的链接来进行重置:\n" + url + "\n" +
                         "如果您无法通过链接进行跳转,请把这个链接复制粘贴在浏览器的地址栏中\n\n" +
@@ -392,7 +392,7 @@ exports.resetPassword = function(req, res, context) {
             .then(function(result) {
                 // password updated, send email
                 if(result && result.nModified > 0) {
-                    url = "http://" + config.server.ip;
+                    url = "http://" + config.server.ip + ':3000';
                     var text = "亲爱的用户 " + user.username + " :\n\n" +
                         "您的密码以经重置,可以通过以下链接访问源艺主页:\n" + url + "\n\n" +
                         "祝您在源艺网体验愉快\n" +
