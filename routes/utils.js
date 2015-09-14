@@ -222,7 +222,7 @@ var utils = {
         var minArticle = {
             _id: article._id,
             title: article.title,
-            content: '',
+            content: article.content,
             createdAt: article.createdAt,
             createdBy: article.createdBy,
             updatedAt: article.updatedAt,

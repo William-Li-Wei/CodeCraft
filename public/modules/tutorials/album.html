@@ -57,7 +57,7 @@
                 <hr>
                 <h4>
                     文章列表
-                    <span class="pull-right" style="font-size: small"> <i class="fa fa-file"></i> {{ album.articles.length }} 篇文章</span>
+                    <span class="pull-right" style="font-size: small"> <i class="fa fa-file"></i> {{ album.articles.length || 0 }} 篇文章</span>
                 </h4>
                 <table class="table borderless">
                     <tr ng-repeat="article in album.articles">
@@ -88,7 +88,7 @@
                     </tr>
                 </table>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-success btn-sm pull-right" ng-click="addArticle()" ng-if="album.isPublic || album.author._id === user._id">
+                    <button type="button" class="btn btn-success btn-sm pull-right" ng-click="addArticle()" ng-if="album.author._id === user._id">
                         <i class="fa fa-plus"></i> 添加文章
                     </button>
                 </div>

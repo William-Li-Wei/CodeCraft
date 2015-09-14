@@ -254,6 +254,9 @@ ccTutorials.controller('AddArticleController', ['$scope', '$state', '$stateParam
         albumId: $stateParams.albumId,
         tags: []
     };
+    if(!$scope.user) {
+        $state.go('home');
+    }
 
     // Interactions
     $scope.cancel = function() {

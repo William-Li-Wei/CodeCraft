@@ -17,31 +17,31 @@
         <div class="col-sm-3">
             <div class="col-sm-12">
                 <div class="profile-photo-medium inner">
-                    <img src="resources/img/avatar/avatar_steam_huo.jpg" alt="huo" class="img-circle">
+                    <img ng-src="{{ user.photo === 'default' ? 'resources/img/avatar/avatar_default.jpg' : user.photo }}" alt="huo" class="img-circle">
                 </div>
                 <div class="profile-general">
                     <h5>{{ user.username }}</h5>
                 </div>
             </div>
-            <div class="col-sm-12">
-                参与贡献的人: <a>朝尼</a>  <a>尼瑪</a>
-            </div>
-            <div class="col-sm-12">
-                <hr>
-                <p>相关推荐:</p>
-                <p>
-                    <a>We Do Code Right</a>
-                </p>
-                <p>
-                    <a>Database 2015</a>
-                </p>
-                <p>
-                    <a>Learn Python from 0</a>
-                </p>
-                <p>
-                    <a>Computer Science</a>
-                </p>
-            </div>
+            <!--<div class="col-sm-12">-->
+                <!--参与贡献的人: <a>朝尼</a>  <a>尼瑪</a>-->
+            <!--</div>-->
+            <!--<div class="col-sm-12">-->
+                <!--<hr>-->
+                <!--<p>相关推荐:</p>-->
+                <!--<p>-->
+                    <!--<a>We Do Code Right</a>-->
+                <!--</p>-->
+                <!--<p>-->
+                    <!--<a>Database 2015</a>-->
+                <!--</p>-->
+                <!--<p>-->
+                    <!--<a>Learn Python from 0</a>-->
+                <!--</p>-->
+                <!--<p>-->
+                    <!--<a>Computer Science</a>-->
+                <!--</p>-->
+            <!--</div>-->
         </div>
     </div>
 </div>
