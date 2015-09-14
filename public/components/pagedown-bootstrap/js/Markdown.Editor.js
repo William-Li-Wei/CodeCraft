@@ -1030,7 +1030,7 @@
 			//     <p>One fine body…</p>
 			//   </div>
 			//   <div class="modal-footer">
-			//     <a href="#" class="btn btn-primary">Save changes</a>
+			//     <a href="#" class="btn btn-sm btn-primary">Save changes</a>
 			//     <a href="#" class="btn">Close</a>
 			//   </div>
 			// </div>
@@ -1090,14 +1090,14 @@
 
 			// The ok button
 			var okButton = doc.createElement("button");
-			okButton.className = "btn btn-primary";
+			okButton.className = "btn btn-sm btn-primary";
 			okButton.type = "button";
 			okButton.onclick = function () { return close(false); };
 			okButton.innerHTML = "OK";
 
 			// The cancel button
 			var cancelButton = doc.createElement("button");
-			cancelButton.className = "btn btn-primary";
+			cancelButton.className = "btn btn-sm btn-primary";
 			cancelButton.type = "button";
 			cancelButton.onclick = function () { return close(true); };
 			cancelButton.innerHTML = "Cancel";
@@ -1271,7 +1271,7 @@
 				//
 				// var link = CreateLinkDialog();
 				// makeMarkdownLink(link);
-				// 
+				//
 				// Instead of this straightforward method of handling a
 				// dialog I have to pass any code which would execute
 				// after the dialog is dismissed (e.g. link creation)
@@ -1376,7 +1376,7 @@
 			group1 = makeGroup(1);
 			buttons.bold = makeButton("wmd-bold-button", "Bold - Ctrl+B", "fa fa-bold", bindCommand("doBold"), group1);
 			buttons.italic = makeButton("wmd-italic-button", "Italic - Ctrl+I", "fa fa-italic", bindCommand("doItalic"), group1);
-			
+
 			group2 = makeGroup(2);
 			buttons.link = makeButton("wmd-link-button", "Link - Ctrl+L", "fa fa-link", bindCommand(function (chunk, postProcessing) {
 				return this.doLinkOrImage(chunk, postProcessing, false);
@@ -1396,7 +1396,7 @@
 			}), group3);
 			buttons.heading = makeButton("wmd-heading-button", "Heading - Ctrl+H", "fa fa-font", bindCommand("doHeading"), group3);
 			buttons.hr = makeButton("wmd-hr-button", "Horizontal Rule - Ctrl+R", "fa fa-arrows-h", bindCommand("doHorizontalRule"), group3);
-			
+
 			group4 = makeGroup(4);
 			buttons.undo = makeButton("wmd-undo-button", "Undo - Ctrl+Z", "fa fa-undo", null, group4);
 			buttons.undo.execute = function (manager) { if (manager) manager.undo(); };
@@ -1421,7 +1421,7 @@
 //				var helpButtonImage = document.createElement("i");
 //				helpButtonImage.className = "fa fa-question-circle";
 //				helpButton.appendChild(helpButtonImage);
-//				helpButton.className = "btn btn-primary btn-sm";
+//				helpButton.className = "btn btn-sm btn-primary btn-sm";
 //				helpButton.id = "wmd-help-button" + postfix;
 //				helpButton.isHelp = true;
 //				helpButton.title = helpOptions.help.title || defaultHelpHoverTitle;
@@ -1432,7 +1432,7 @@
 //                var previewButtonImage = document.createElement("i");
 //                previewButtonImage.className = "fa fa-eye";
 //                previewButton.appendChild(previewButtonImage);
-//                previewButton.className = "btn btn-primary btn-sm";
+//                previewButton.className = "btn btn-sm btn-primary btn-sm";
 //                previewButton.id = "wmd-preview-button" + postfix;
 //                previewButton.title = helpOptions.preview.title || defaultHelpHoverTitle;
 //                $(previewButton).tooltip({placement: 'bottom'})
