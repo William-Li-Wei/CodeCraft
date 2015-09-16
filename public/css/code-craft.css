@@ -240,6 +240,10 @@ textarea {
     min-height: 150px;
 }
 
+img {
+    max-width: 100%;
+}
+
 
 /**********  System Animation  **********/
 
