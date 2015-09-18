@@ -53,7 +53,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-12" style="min-height: 300px">
                 <hr>
                 <h4>
                     文章列表
@@ -93,7 +93,7 @@
                     </button>
                 </div>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-12" ng-if="mode === 'view'">
                <div class="comments-panel" comments="album.comments" save-comments="saveComments(comments)"></div>
             </div>
         </div>

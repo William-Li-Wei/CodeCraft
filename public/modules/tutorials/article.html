@@ -6,12 +6,13 @@
                     <i class="fa fa-book"></i> {{ article.album.name }}
                 </a>
             </h4>
+            <hr/>
             <form name="form" novalidate>
                 <div class="form-group center" ng-class="{ 'has-error': !form.title.$valid }">
                     <h2 ng-if="mode === 'view'">{{ article.title }}</h2>
                     <input class="form-control" type="text" name="title" ng-if="mode === 'edit'" ng-model="articleData.title" placeholder="文章标题" required/>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="min-height: 300px">
                     <div class="pagedown-viewer" content="article.content" ng-if="mode === 'view'"></div>
                     <div class="pagedown" ng-if="mode === 'edit'" ng-model="articleData.content" placeholder="'请在此处编辑文章内容，支持 Markdown (点击右上角的按钮查看Markdown帮助)'"></div>
                 </div>
@@ -23,7 +24,7 @@
                     <button type="button" class="btn btn-success btn-sm" ng-if="mode === 'edit'" busy="save()" busy-disabled="!form.$valid"> 保存 </button>
                 </div>
             </form>
-            <div class="col-sm-12">
+            <div class="col-sm-12" ng-if="mode === 'view'">
                 <div class="comments-panel" comments="article.comments" save-comments="saveComments(comments)"></div>
             </div>
         </div>

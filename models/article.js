@@ -10,6 +10,8 @@ var articleSchema = new Schema({
     tags                : [],
     albumId             : { type: Schema.Types.ObjectId, required: true },
     author              : { type: Schema.Types.Mixed, required: true },
+    hasVideo            : { type: Boolean, default: false },
+    videoUrl            : { type: String },
     comments            : [],
     contributors        : [],
     likedBy             : [],
