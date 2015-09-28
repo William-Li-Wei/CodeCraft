@@ -38,7 +38,7 @@ Follow these steps to get it up and running.
 
 ### Contribution guidelines ###
 
-* Contact me at st.rhino.go@gmail.com
+* Contact me at liweisadleader@hotmail.com
 
 ### Who do I talk to? ###
 
