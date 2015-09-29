@@ -10,8 +10,8 @@
 * 配置开发环境: 下载和安装 NodeJs 和 MongoDB
 * 关于NodeJs -- https://nodejs.org/
 * 关于MongoDB -- https://www.mongodb.org/
-* 克隆这个知识库 `git clone https://github.com/sadleader/codecraft.git`
-* 进入项目目录 `cd codecraft`
+* 克隆这个知识库 `git clone https://git.oschina.net/liweisadleader/CodeCraft.git`
+* 进入项目目录 `cd CodeCraft`
 * 安装 Node 依赖 `sudo npm install`
 * 启动服务器 `node server.js` (如需更改本地设置, 请修改config.js)
 * 打开浏览器并在地址栏输入 `http://localhost:3000/`
