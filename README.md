@@ -23,7 +23,7 @@ Follow these steps to get it up and running.
 
 ### What is this repository for? ###
 
-* A node-express-angular based web project to allow developers and programming fans to post tutorials and share experiences.
+* A node-express-angular based web project to allow developers and programming funs to post tutorials and share experiences.
 * v0.0.1
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
